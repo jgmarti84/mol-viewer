@@ -88,7 +88,14 @@
 
   // ── NGL ───────────────────────────────────────────────────────────────────
   var stage = new NGL.Stage("viewport", { backgroundColor: "#1a1a2e" });
-  if (stage.tooltip) stage.tooltip.style.display = "none"; // suppress NGL built-in tooltip
+  // Permanently suppress NGL's built-in tooltip — its internal hovered handler
+  // overrides a one-time display:none, so we watch for style changes and revert.
+  if (stage.tooltip) {
+    stage.tooltip.style.display = "none";
+    new MutationObserver(function () {
+      stage.tooltip.style.display = "none";
+    }).observe(stage.tooltip, { attributes: true, attributeFilter: ["style"] });
+  }
   window.addEventListener("resize", function () { stage.handleResize(); });
 
   Promise.all([
