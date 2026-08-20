@@ -50,8 +50,8 @@
       <label for="cb-hyd">Hydrophobic (HYD)</label>
     </div>
     <div class="slider-row">
-      <input type="range" id="sl-hyd" min="0.5" max="6" step="0.1" value="2.8">
-      <span class="slider-val" id="sv-hyd">2.8</span>
+      <input type="range" id="sl-hyd" min="0.5" max="6" step="0.1" value="0.5">
+      <span class="slider-val" id="sv-hyd">0.5</span>
     </div>
 
     <div class="layer">
@@ -60,8 +60,8 @@
       <label for="cb-don">Donor (DON)</label>
     </div>
     <div class="slider-row">
-      <input type="range" id="sl-don" min="0.5" max="6" step="0.1" value="1.9">
-      <span class="slider-val" id="sv-don">1.9</span>
+      <input type="range" id="sl-don" min="0.5" max="6" step="0.1" value="0.2">
+      <span class="slider-val" id="sv-don">0.2</span>
     </div>
 
     <div class="layer">
@@ -70,8 +70,8 @@
       <label for="cb-acc">Acceptor (ACC)</label>
     </div>
     <div class="slider-row">
-      <input type="range" id="sl-acc" min="0.5" max="6" step="0.1" value="1.9">
-      <span class="slider-val" id="sv-acc">1.9</span>
+      <input type="range" id="sl-acc" min="0.5" max="6" step="0.1" value="0.2">
+      <span class="slider-val" id="sv-acc">0.2</span>
     </div>
     <div class="layer">
       <input type="checkbox" id="cb-labels" checked>
@@ -107,19 +107,19 @@
         sele: "[HYD]",
         color: "#f5a623",
         opacity: 0.55,
-        radiusScale: 2.8   // ~4.8 Å — pocket center
+        radiusScale: 0.5   // ~4.8 Å — pocket center
       });
       var repDon = pockets.addRepresentation("spacefill", {
         sele: "[DON]",
         color: "#4a90e2",
         opacity: 0.45,
-        radiusScale: 1.9
+        radiusScale: 0.2
       });
       var repAcc = pockets.addRepresentation("spacefill", {
         sele: "[ACC]",
         color: "#e05c5c",
         opacity: 0.45,
-        radiusScale: 1.9
+        radiusScale: 0.2
       });
 
       // Labels — pocket rank (residue number) on HYD atoms only
