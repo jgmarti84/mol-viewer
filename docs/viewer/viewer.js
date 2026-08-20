@@ -14,6 +14,8 @@
     "  padding: 16px 14px; display: flex; flex-direction: column; gap: 12px;\n" +
     "  border-left: 1px solid rgba(255,255,255,0.08); z-index: 10; overflow-y: auto;\n" +
     "}\n" +
+    "#back-btn { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; color: #aaa; text-decoration: none; padding: 4px 8px; border: 1px solid rgba(255,255,255,0.15); border-radius: 4px; transition: color 0.15s, border-color 0.15s; }\n" +
+    "#back-btn:hover { color: #fff; border-color: rgba(255,255,255,0.4); }\n" +
     "#sys-title { font-size: 15px; font-weight: 700; color: #fff; letter-spacing: 0.5px; }\n" +
     "#panel h3 { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 1.5px; }\n" +
     ".layer { display: flex; align-items: center; gap: 9px; font-size: 13px; }\n" +
@@ -47,6 +49,7 @@
   document.body.innerHTML =
     '<div id="viewport"></div>' +
     '<div id="panel">' +
+    '  <a id="back-btn" href="../">&#8592; All systems</a>' +
     '  <div id="sys-title">Loading…</div>' +
     '  <hr class="divider">' +
     '  <h3>Layers</h3>' +
