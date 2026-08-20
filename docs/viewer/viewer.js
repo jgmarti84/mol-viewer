@@ -23,7 +23,8 @@
     "#status { font-size: 11px; color: #666; margin-top: auto; }\n" +
     ".slider-row { display: flex; align-items: center; gap: 6px; padding-left: 20px; }\n" +
     ".slider-row input[type=range] { flex: 1; cursor: pointer; accent-color: #7b8fff; height: 3px; }\n" +
-    ".slider-val { font-size: 11px; color: #999; width: 26px; text-align: right; flex-shrink: 0; }\n" +
+    ".slider-val { font-size: 11px; color: #999; width: 32px; text-align: right; flex-shrink: 0; }\n" +
+    ".filter-label { font-size: 11px; color: #aaa; }\n" +
     "#tooltip {\n" +
     "  position: fixed; pointer-events: none; z-index: 100;\n" +
     "  background: rgba(0,0,0,0.82); color: #fff;\n" +
@@ -81,6 +82,18 @@
     '  <div class="layer">' +
     '    <input type="checkbox" id="cb-labels" checked>' +
     '    <label for="cb-labels">Pocket labels</label>' +
+    '  </div>' +
+    '  <hr class="divider">' +
+    '  <h3>Filters</h3>' +
+    '  <div class="filter-label">Max dist. to ligand</div>' +
+    '  <div class="slider-row">' +
+    '    <input type="range" id="sl-dist" min="0" max="50" step="0.5" value="50">' +
+    '    <span class="slider-val" id="sv-dist">all</span>' +
+    '  </div>' +
+    '  <div class="filter-label">Min WFP score</div>' +
+    '  <div class="slider-row">' +
+    '    <input type="range" id="sl-wfp" min="0" max="100" step="1" value="0">' +
+    '    <span class="slider-val" id="sv-wfp">0</span>' +
     '  </div>' +
     '  <div id="status">Loading…</div>' +
     '</div>' +
@@ -227,6 +240,63 @@
     bindSlider("sl-hyd", "sv-hyd", repHyd);
     bindSlider("sl-don", "sv-don", repDon);
     bindSlider("sl-acc", "sv-acc", repAcc);
+
+    // ── Pocket filtering ──────────────────────────────────────────────────
+    var ligCoords = [];
+    ligand.structure.eachAtom(function (ap) {
+      ligCoords.push([ap.x, ap.y, ap.z]);
+    });
+
+    // For each HYD pocket center compute min distance to any ligand atom
+    var pocketMeta = {};
+    pockets.structure.eachAtom(function (ap) {
+      if (ap.resname === "HYD") {
+        var minD = Infinity;
+        for (var i = 0; i < ligCoords.length; i++) {
+          var dx = ap.x - ligCoords[i][0];
+          var dy = ap.y - ligCoords[i][1];
+          var dz = ap.z - ligCoords[i][2];
+          var d  = Math.sqrt(dx*dx + dy*dy + dz*dz);
+          if (d < minD) minD = d;
+        }
+        pocketMeta[ap.resno] = { wfp: ap.occupancy, distLig: minD };
+      }
+    });
+
+    // Set distance slider range from actual data so default = show all
+    var maxObsDist = Math.ceil(Math.max.apply(null,
+      Object.keys(pocketMeta).map(function (k) { return pocketMeta[k].distLig; })
+    ));
+    var slDist = document.getElementById("sl-dist");
+    slDist.max   = maxObsDist;
+    slDist.value = maxObsDist;
+
+    function applyFilters() {
+      var maxD   = parseFloat(document.getElementById("sl-dist").value);
+      var minWfp = parseFloat(document.getElementById("sl-wfp").value);
+
+      var qualifying = Object.keys(pocketMeta).filter(function (resno) {
+        var m = pocketMeta[resno];
+        return m.distLig <= maxD && m.wfp >= minWfp;
+      });
+
+      document.getElementById("sv-dist").textContent =
+        (maxD >= maxObsDist) ? "all" : maxD.toFixed(1) + "Å";
+      document.getElementById("sv-wfp").textContent = minWfp.toFixed(0);
+
+      // "99999" selects a non-existent resno → effectively hides everything
+      var resSele = qualifying.length
+        ? "(" + qualifying.join(" or ") + ")"
+        : "99999";
+
+      repHyd.setSelection("[HYD] and " + resSele);
+      repDon.setSelection("[DON] and " + resSele);
+      repAcc.setSelection("[ACC] and " + resSele);
+      repLabels.setSelection("[HYD] and " + resSele);
+    }
+
+    document.getElementById("sl-dist").addEventListener("input", applyFilters);
+    document.getElementById("sl-wfp").addEventListener("input", applyFilters);
   }).catch(function (err) {
     document.getElementById("status").textContent = "Error: " + err.message;
     console.error(err);
