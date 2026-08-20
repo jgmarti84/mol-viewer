@@ -122,12 +122,25 @@
         radiusScale: 0.2
       });
 
-      // Labels — pocket rank (residue number) on HYD atoms only
+      // Build custom label text per HYD atom: "#rank (HR:hyd_rank)  WFP:xx  bur:xx"
+      var labelText = {};
+      pockets.structure.eachAtom(function (ap) {
+        if (ap.resname === "HYD") {
+          var pocketRank = ap.resno;
+          // var hydRank    = ap.sstruc || ap.segid || pocketRank; // SegID holds hydrophobic_rank
+          var hydRank    = (ap.segid || String(pocketRank)).trim(); // SegID holds hydrophobic_rank
+          var wfp        = ap.occupancy.toFixed(1);
+          var bur        = ap.bfactor.toFixed(2);
+          labelText[ap.index] = "#" + pocketRank + " (HR:" + hydRank + ")  WFP:" + wfp + "  bur:" + bur;
+        }
+      });
+
       var repLabels = pockets.addRepresentation("label", {
         sele: "[HYD]",
-        labelType: "resno",
+        labelType: "text",
+        labelText: labelText,
         color: "white",
-        fontSize: 2.2,
+        fontSize: 1.8,
         fontWeight: "bold",
         showBackground: true,
         backgroundColor: "black",
