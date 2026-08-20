@@ -29,7 +29,7 @@
     "  background: rgba(0,0,0,0.82); color: #fff;\n" +
     "  font-family: monospace; font-size: 12px; white-space: nowrap;\n" +
     "  padding: 6px 10px; border-radius: 5px;\n" +
-    "  border: 1px solid rgba(245,166,35,0.55);\n" +
+    "  border: 1px solid rgba(255,255,255,0.18);\n" +
     "  display: none;\n" +
     "}";
   document.head.appendChild(style);
@@ -88,6 +88,7 @@
 
   // ── NGL ───────────────────────────────────────────────────────────────────
   var stage = new NGL.Stage("viewport", { backgroundColor: "#1a1a2e" });
+  if (stage.tooltip) stage.tooltip.style.display = "none"; // suppress NGL built-in tooltip
   window.addEventListener("resize", function () { stage.handleResize(); });
 
   Promise.all([
@@ -151,7 +152,7 @@
     stage.autoView();
     document.getElementById("status").textContent = sys.id + " · " + sys.ligand;
 
-    // ── Hover tooltip (HYD atoms only) ────────────────────────────────────
+    // ── Hover tooltip (HYD / DON / ACC) ──────────────────────────────────
     var tooltip = document.getElementById("tooltip");
     var mouseX = 0, mouseY = 0;
     document.getElementById("viewport").addEventListener("mousemove", function (e) {
@@ -160,19 +161,32 @@
     });
 
     stage.signals.hovered.add(function (pickingProxy) {
-      if (pickingProxy && pickingProxy.atom && pickingProxy.atom.resname === "HYD") {
-        var ap         = pickingProxy.atom;
-        var pocketRank = ap.resno;
-        var hydRank    = hydRankByResno[pocketRank] || String(pocketRank);
-        var wfp        = ap.occupancy.toFixed(1);
-        var bur        = ap.bfactor.toFixed(2);
-        tooltip.textContent = "#" + pocketRank + " (HR:" + hydRank + ")  WFP:" + wfp + "  bur:" + bur;
-        tooltip.style.left    = (mouseX + 14) + "px";
-        tooltip.style.top     = (mouseY - 10) + "px";
-        tooltip.style.display = "block";
+      if (!pickingProxy || !pickingProxy.atom) {
+        tooltip.style.display = "none";
+        return;
+      }
+      var ap      = pickingProxy.atom;
+      var rn      = ap.resname;
+      var pocketRank = ap.resno;
+      var hydRank    = hydRankByResno[pocketRank] || String(pocketRank);
+      var wfp        = ap.occupancy.toFixed(1);
+      var text;
+
+      if (rn === "HYD") {
+        var bur = ap.bfactor.toFixed(2);
+        text = "#" + pocketRank + " (HR:" + hydRank + ")  WFP:" + wfp + "  bur:" + bur;
+      } else if (rn === "DON" || rn === "ACC") {
+        var r90 = ap.bfactor.toFixed(2);
+        text = rn + "  →  pocket #" + pocketRank + " (HR:" + hydRank + ")  WFP:" + wfp + "  R90:" + r90 + "Å";
       } else {
         tooltip.style.display = "none";
+        return;
       }
+
+      tooltip.textContent    = text;
+      tooltip.style.left     = (mouseX + 14) + "px";
+      tooltip.style.top      = (mouseY - 10) + "px";
+      tooltip.style.display  = "block";
     });
 
     function bindComp(id, comp) {
