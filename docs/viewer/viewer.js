@@ -23,7 +23,15 @@
     "#status { font-size: 11px; color: #666; margin-top: auto; }\n" +
     ".slider-row { display: flex; align-items: center; gap: 6px; padding-left: 20px; }\n" +
     ".slider-row input[type=range] { flex: 1; cursor: pointer; accent-color: #7b8fff; height: 3px; }\n" +
-    ".slider-val { font-size: 11px; color: #999; width: 26px; text-align: right; flex-shrink: 0; }";
+    ".slider-val { font-size: 11px; color: #999; width: 26px; text-align: right; flex-shrink: 0; }\n" +
+    "#tooltip {\n" +
+    "  position: fixed; pointer-events: none; z-index: 100;\n" +
+    "  background: rgba(0,0,0,0.82); color: #fff;\n" +
+    "  font-family: monospace; font-size: 12px; white-space: nowrap;\n" +
+    "  padding: 6px 10px; border-radius: 5px;\n" +
+    "  border: 1px solid rgba(245,166,35,0.55);\n" +
+    "  display: none;\n" +
+    "}";
   document.head.appendChild(style);
 
   // ── DOM ───────────────────────────────────────────────────────────────────
@@ -75,7 +83,8 @@
     '    <label for="cb-labels">Pocket labels</label>' +
     '  </div>' +
     '  <div id="status">Loading…</div>' +
-    '</div>';
+    '</div>' +
+    '<div id="tooltip"></div>';
 
   // ── NGL ───────────────────────────────────────────────────────────────────
   var stage = new NGL.Stage("viewport", { backgroundColor: "#1a1a2e" });
@@ -141,6 +150,30 @@
 
     stage.autoView();
     document.getElementById("status").textContent = sys.id + " · " + sys.ligand;
+
+    // ── Hover tooltip (HYD atoms only) ────────────────────────────────────
+    var tooltip = document.getElementById("tooltip");
+    var mouseX = 0, mouseY = 0;
+    document.getElementById("viewport").addEventListener("mousemove", function (e) {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    });
+
+    stage.signals.hovered.add(function (pickingProxy) {
+      if (pickingProxy && pickingProxy.atom && pickingProxy.atom.resname === "HYD") {
+        var ap         = pickingProxy.atom;
+        var pocketRank = ap.resno;
+        var hydRank    = hydRankByResno[pocketRank] || String(pocketRank);
+        var wfp        = ap.occupancy.toFixed(1);
+        var bur        = ap.bfactor.toFixed(2);
+        tooltip.textContent = "#" + pocketRank + " (HR:" + hydRank + ")  WFP:" + wfp + "  bur:" + bur;
+        tooltip.style.left    = (mouseX + 14) + "px";
+        tooltip.style.top     = (mouseY - 10) + "px";
+        tooltip.style.display = "block";
+      } else {
+        tooltip.style.display = "none";
+      }
+    });
 
     function bindComp(id, comp) {
       document.getElementById(id).addEventListener("change", function (e) {
