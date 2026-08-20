@@ -1,6 +1,8 @@
 (function () {
   var sys = window.SYSTEM || { id: "?", ligand: "?" };
 
+  document.addEventListener("DOMContentLoaded", function () {
+
   // ── Styles ────────────────────────────────────────────────────────────────
   var style = document.createElement("style");
   style.textContent =
@@ -175,4 +177,6 @@
     document.getElementById("status").textContent = "Error: " + err.message;
     console.error(err);
   });
+
+  }); // DOMContentLoaded
 })();
