@@ -89,11 +89,24 @@
     Promise.all([
       stage.loadFile("protein.pdb", { defaultRepresentation: false }),
       stage.loadFile("ligand.pdb",  { defaultRepresentation: false }),
-      stage.loadFile("pockets.pdb", { defaultRepresentation: false })
+      stage.loadFile("pockets.pdb", { defaultRepresentation: false }),
+      fetch("pockets.pdb").then(function (r) { return r.text(); })
     ]).then(function (results) {
       var protein = results[0];
       var ligand  = results[1];
       var pockets = results[2];
+      var pdbText = results[3];
+
+      // Parse SegID (cols 73-76) from raw PDB — ap.segid is unreliable in NGL 2.3.1
+      var hydRankByResno = {};
+      pdbText.split("\n").forEach(function (line) {
+        if (line.length >= 76 && line.startsWith("HETATM") &&
+            line.substring(17, 20).trim() === "HYD") {
+          var resno = parseInt(line.substring(22, 26).trim(), 10);
+          var segi  = line.substring(72, 76).trim();
+          if (segi) hydRankByResno[resno] = segi;
+        }
+      });
 
       // Protein — cartoon colored by chain
       protein.addRepresentation("cartoon", { color: "chainid" });
@@ -127,8 +140,7 @@
       pockets.structure.eachAtom(function (ap) {
         if (ap.resname === "HYD") {
           var pocketRank = ap.resno;
-          // var hydRank    = ap.sstruc || ap.segid || pocketRank; // SegID holds hydrophobic_rank
-          var hydRank    = (ap.segid || String(pocketRank)).trim(); // SegID holds hydrophobic_rank
+          var hydRank    = hydRankByResno[pocketRank] || String(pocketRank);
           var wfp        = ap.occupancy.toFixed(1);
           var bur        = ap.bfactor.toFixed(2);
           labelText[ap.index] = "#" + pocketRank + " (HR:" + hydRank + ")  WFP:" + wfp + "  bur:" + bur;
