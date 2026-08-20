@@ -10,20 +10,21 @@
     "body { background: #1a1a2e; color: #e0e0e0; font-family: sans-serif; display: flex; height: 100vh; overflow: hidden; }\n" +
     "#viewport { flex: 1; }\n" +
     "#panel {\n" +
-    "  width: 190px; background: rgba(0,0,0,0.55); backdrop-filter: blur(6px);\n" +
-    "  padding: 16px 14px; display: flex; flex-direction: column; gap: 14px;\n" +
-    "  border-left: 1px solid rgba(255,255,255,0.08); z-index: 10;\n" +
+    "  width: 220px; background: rgba(0,0,0,0.55); backdrop-filter: blur(6px);\n" +
+    "  padding: 16px 14px; display: flex; flex-direction: column; gap: 12px;\n" +
+    "  border-left: 1px solid rgba(255,255,255,0.08); z-index: 10; overflow-y: auto;\n" +
     "}\n" +
-    "#panel h3 { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 2px; }\n" +
+    "#sys-title { font-size: 15px; font-weight: 700; color: #fff; letter-spacing: 0.5px; }\n" +
+    "#panel h3 { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 1.5px; }\n" +
     ".layer { display: flex; align-items: center; gap: 9px; font-size: 13px; }\n" +
     ".dot { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; opacity: 0.9; }\n" +
     "input[type=checkbox] { cursor: pointer; accent-color: #7b8fff; }\n" +
     "label { cursor: pointer; user-select: none; }\n" +
+    ".val-badge { margin-left: auto; font-size: 12px; font-weight: 700; color: #7b8fff; flex-shrink: 0; }\n" +
     ".divider { border: none; border-top: 1px solid rgba(255,255,255,0.08); }\n" +
-    "#status { font-size: 11px; color: #666; margin-top: auto; }\n" +
-    ".slider-row { display: flex; align-items: center; gap: 6px; padding-left: 20px; }\n" +
-    ".slider-row input[type=range] { flex: 1; cursor: pointer; accent-color: #7b8fff; height: 3px; }\n" +
-    ".slider-val { font-size: 11px; color: #999; width: 32px; text-align: right; flex-shrink: 0; }\n" +
+    ".slider-row { padding-left: 20px; }\n" +
+    ".slider-row input[type=range] { width: 100%; display: block; cursor: pointer; accent-color: #7b8fff; height: 3px; }\n" +
+    ".filter-row { display: flex; align-items: center; justify-content: space-between; }\n" +
     ".filter-label { font-size: 11px; color: #aaa; }\n" +
     "#tooltip {\n" +
     "  position: fixed; pointer-events: none; z-index: 100;\n" +
@@ -39,6 +40,8 @@
   document.body.innerHTML =
     '<div id="viewport"></div>' +
     '<div id="panel">' +
+    '  <div id="sys-title">Loading…</div>' +
+    '  <hr class="divider">' +
     '  <h3>Layers</h3>' +
     '  <div class="layer">' +
     '    <div class="dot" style="background:#5c7fd4;"></div>' +
@@ -55,47 +58,50 @@
     '  <div class="layer">' +
     '    <div class="dot" style="background:#f5a623;"></div>' +
     '    <input type="checkbox" id="cb-hyd" checked>' +
-    '    <label for="cb-hyd">Hydrophobic (HYD)</label>' +
+    '    <label for="cb-hyd">Hydrophobic</label>' +
+    '    <span class="val-badge" id="sv-hyd">0.5</span>' +
     '  </div>' +
     '  <div class="slider-row">' +
     '    <input type="range" id="sl-hyd" min="0.2" max="2" step="0.05" value="0.5">' +
-    '    <span class="slider-val" id="sv-hyd">0.5</span>' +
     '  </div>' +
     '  <div class="layer">' +
     '    <div class="dot" style="background:#4a90e2;"></div>' +
     '    <input type="checkbox" id="cb-don" checked>' +
-    '    <label for="cb-don">Donor (DON)</label>' +
+    '    <label for="cb-don">Donor</label>' +
+    '    <span class="val-badge" id="sv-don">0.2</span>' +
     '  </div>' +
     '  <div class="slider-row">' +
     '    <input type="range" id="sl-don" min="0.2" max="2" step="0.05" value="0.2">' +
-    '    <span class="slider-val" id="sv-don">0.2</span>' +
     '  </div>' +
     '  <div class="layer">' +
     '    <div class="dot" style="background:#e05c5c;"></div>' +
     '    <input type="checkbox" id="cb-acc" checked>' +
-    '    <label for="cb-acc">Acceptor (ACC)</label>' +
+    '    <label for="cb-acc">Acceptor</label>' +
+    '    <span class="val-badge" id="sv-acc">0.2</span>' +
     '  </div>' +
     '  <div class="slider-row">' +
     '    <input type="range" id="sl-acc" min="0.2" max="2" step="0.05" value="0.2">' +
-    '    <span class="slider-val" id="sv-acc">0.2</span>' +
     '  </div>' +
     '  <div class="layer">' +
-    '    <input type="checkbox" id="cb-labels" checked>' +
+    '    <input type="checkbox" id="cb-labels">' +
     '    <label for="cb-labels">Pocket labels</label>' +
     '  </div>' +
     '  <hr class="divider">' +
     '  <h3>Filters</h3>' +
-    '  <div class="filter-label">Max dist. to ligand</div>' +
+    '  <div class="filter-row">' +
+    '    <span class="filter-label">Max dist. to ligand</span>' +
+    '    <span class="val-badge" id="sv-dist">all</span>' +
+    '  </div>' +
     '  <div class="slider-row">' +
     '    <input type="range" id="sl-dist" min="0" max="50" step="0.5" value="50">' +
-    '    <span class="slider-val" id="sv-dist">all</span>' +
     '  </div>' +
-    '  <div class="filter-label">Min WFP score</div>' +
+    '  <div class="filter-row">' +
+    '    <span class="filter-label">Min WFP score</span>' +
+    '    <span class="val-badge" id="sv-wfp">0</span>' +
+    '  </div>' +
     '  <div class="slider-row">' +
     '    <input type="range" id="sl-wfp" min="0" max="100" step="1" value="0">' +
-    '    <span class="slider-val" id="sv-wfp">0</span>' +
     '  </div>' +
-    '  <div id="status">Loading…</div>' +
     '</div>' +
     '<div id="tooltip"></div>';
 
@@ -157,7 +163,7 @@
       }
     });
 
-    var repLabels = pockets.addRepresentation("label", {
+    var repLabels = pockets.addRepresentation("label", { visible: false,
       sele: "[HYD]",
       labelType: "text",
       labelText: labelText,
@@ -170,7 +176,7 @@
     });
 
     stage.autoView();
-    document.getElementById("status").textContent = sys.id + " · " + sys.ligand;
+    document.getElementById("sys-title").textContent = sys.id + " · " + sys.ligand;
 
     // ── Hover tooltip (HYD / DON / ACC) ──────────────────────────────────
     var tooltip = document.getElementById("tooltip");
@@ -298,7 +304,7 @@
     document.getElementById("sl-dist").addEventListener("input", applyFilters);
     document.getElementById("sl-wfp").addEventListener("input", applyFilters);
   }).catch(function (err) {
-    document.getElementById("status").textContent = "Error: " + err.message;
+    document.getElementById("sys-title").textContent = "Error: " + err.message;
     console.error(err);
   });
 
