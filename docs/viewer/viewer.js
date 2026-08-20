@@ -26,6 +26,13 @@
     ".slider-row input[type=range] { width: 100%; display: block; cursor: pointer; accent-color: #7b8fff; height: 3px; }\n" +
     ".filter-row { display: flex; align-items: center; justify-content: space-between; }\n" +
     ".filter-label { font-size: 11px; color: #aaa; }\n" +
+    ".range-wrap { position: relative; height: 18px; margin-top: 2px; }\n" +
+    ".range-track { position: absolute; top: 50%; left: 0; right: 0; height: 3px; transform: translateY(-50%); border-radius: 2px; pointer-events: none; background: rgba(255,255,255,0.12); }\n" +
+    ".range-wrap input[type=range] { position: absolute; width: 100%; top: 50%; transform: translateY(-50%); margin: 0; padding: 0; height: 3px; background: transparent; pointer-events: none; -webkit-appearance: none; appearance: none; }\n" +
+    ".range-wrap input[type=range]::-webkit-slider-thumb { pointer-events: all; -webkit-appearance: none; width: 13px; height: 13px; border-radius: 50%; background: #7b8fff; cursor: pointer; border: 2px solid #1a1a2e; }\n" +
+    ".range-wrap input[type=range]::-moz-range-thumb { pointer-events: all; width: 13px; height: 13px; border-radius: 50%; background: #7b8fff; cursor: pointer; border: 2px solid #1a1a2e; box-sizing: border-box; }\n" +
+    "#sl-rank-min { z-index: 2; }\n" +
+    "#sl-rank-max { z-index: 3; }\n" +
     "#tooltip {\n" +
     "  position: fixed; pointer-events: none; z-index: 100;\n" +
     "  background: rgba(0,0,0,0.82); color: #fff;\n" +
@@ -88,6 +95,17 @@
     '  </div>' +
     '  <hr class="divider">' +
     '  <h3>Filters</h3>' +
+    '  <div class="filter-row">' +
+    '    <span class="filter-label">Rank</span>' +
+    '    <span class="val-badge" id="sv-rank">— —</span>' +
+    '  </div>' +
+    '  <div class="slider-row">' +
+    '    <div class="range-wrap">' +
+    '      <div class="range-track" id="rank-track"></div>' +
+    '      <input type="range" id="sl-rank-min" min="1" max="10" step="1" value="1">' +
+    '      <input type="range" id="sl-rank-max" min="1" max="10" step="1" value="10">' +
+    '    </div>' +
+    '  </div>' +
     '  <div class="filter-row">' +
     '    <span class="filter-label">Max dist. to ligand</span>' +
     '    <span class="val-badge" id="sv-dist">all</span>' +
@@ -269,28 +287,55 @@
       }
     });
 
-    // Set distance slider range from actual data so default = show all
+    // Distance slider: range from actual data
     var maxObsDist = Math.ceil(Math.max.apply(null,
       Object.keys(pocketMeta).map(function (k) { return pocketMeta[k].distLig; })
     ));
     var slDist = document.getElementById("sl-dist");
-    slDist.max   = maxObsDist;
-    slDist.value = maxObsDist;
+    slDist.max = maxObsDist; slDist.value = maxObsDist;
+
+    // Rank slider: range from actual pocket resno values
+    var allRanks = Object.keys(pocketMeta).map(Number).sort(function (a, b) { return a - b; });
+    var rankAbsMin = allRanks[0];
+    var rankAbsMax = allRanks[allRanks.length - 1];
+    var slRankMin = document.getElementById("sl-rank-min");
+    var slRankMax = document.getElementById("sl-rank-max");
+    slRankMin.min = rankAbsMin; slRankMin.max = rankAbsMax; slRankMin.value = rankAbsMin;
+    slRankMax.min = rankAbsMin; slRankMax.max = rankAbsMax; slRankMax.value = rankAbsMax;
+    document.getElementById("sv-rank").textContent = rankAbsMin + " — " + rankAbsMax;
+
+    function updateRankTrack() {
+      var lo  = parseInt(slRankMin.value);
+      var hi  = parseInt(slRankMax.value);
+      var pLo = ((lo - rankAbsMin) / (rankAbsMax - rankAbsMin)) * 100;
+      var pHi = ((hi - rankAbsMin) / (rankAbsMax - rankAbsMin)) * 100;
+      var dim = "rgba(255,255,255,0.12)";
+      var acc = "#7b8fff";
+      document.getElementById("rank-track").style.background =
+        "linear-gradient(to right," + dim + " " + pLo + "%," +
+        acc + " " + pLo + "%," + acc + " " + pHi + "%," + dim + " " + pHi + "%)";
+      // When both handles meet, raise min so it stays draggable
+      slRankMin.style.zIndex = (lo >= rankAbsMax) ? 4 : 2;
+    }
+    updateRankTrack();
 
     function applyFilters() {
-      var maxD   = parseFloat(document.getElementById("sl-dist").value);
-      var minWfp = parseFloat(document.getElementById("sl-wfp").value);
+      var maxD    = parseFloat(document.getElementById("sl-dist").value);
+      var minWfp  = parseFloat(document.getElementById("sl-wfp").value);
+      var minRank = parseInt(slRankMin.value);
+      var maxRank = parseInt(slRankMax.value);
 
       var qualifying = Object.keys(pocketMeta).filter(function (resno) {
         var m = pocketMeta[resno];
-        return m.distLig <= maxD && m.wfp >= minWfp;
+        var r = parseInt(resno);
+        return m.distLig <= maxD && m.wfp >= minWfp && r >= minRank && r <= maxRank;
       });
 
       document.getElementById("sv-dist").textContent =
         (maxD >= maxObsDist) ? "all" : maxD.toFixed(1) + "Å";
-      document.getElementById("sv-wfp").textContent = minWfp.toFixed(0);
+      document.getElementById("sv-wfp").textContent  = minWfp.toFixed(0);
+      document.getElementById("sv-rank").textContent = minRank + " — " + maxRank;
 
-      // "99999" selects a non-existent resno → effectively hides everything
       var resSele = qualifying.length
         ? "(" + qualifying.join(" or ") + ")"
         : "99999";
@@ -301,6 +346,18 @@
       repLabels.setSelection("[HYD] and " + resSele);
     }
 
+    slRankMin.addEventListener("input", function () {
+      if (parseInt(slRankMin.value) > parseInt(slRankMax.value))
+        slRankMin.value = slRankMax.value;
+      updateRankTrack();
+      applyFilters();
+    });
+    slRankMax.addEventListener("input", function () {
+      if (parseInt(slRankMax.value) < parseInt(slRankMin.value))
+        slRankMax.value = slRankMin.value;
+      updateRankTrack();
+      applyFilters();
+    });
     document.getElementById("sl-dist").addEventListener("input", applyFilters);
     document.getElementById("sl-wfp").addEventListener("input", applyFilters);
   }).catch(function (err) {
