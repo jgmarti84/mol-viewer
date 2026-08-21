@@ -68,7 +68,7 @@
     '  <div id="sys-title">Loading&#8230;</div>' +
 
     // Layers
-    '  <div class="section-card">' +
+    '  <div class="section-card collapsed">' +
     '    <div class="section-header"><span class="section-arrow">&#9662;</span>Layers</div>' +
     '    <div class="section-body">' +
     '      <div class="layer"><div class="dot" style="background:#5c7fd4;"></div><input type="checkbox" id="cb-protein" checked><label for="cb-protein">Protein</label></div>' +
@@ -107,7 +107,7 @@
     '  </div>' +
 
     // Filters
-    '  <div class="section-card">' +
+    '  <div class="section-card collapsed">' +
     '    <div class="section-header"><span class="section-arrow">&#9662;</span>Filters</div>' +
     '    <div class="section-body">' +
     '      <div class="filter-row"><span class="filter-label">Rank</span><span class="val-badge" id="sv-rank">&#8212; &#8212;</span></div>' +
@@ -429,25 +429,25 @@
     // ── Ligand interactions (optional — only if interactions.pdb exists) ──────
     if (intComp) {
       var INT_TYPES = [
-        { res: "HYD", label: "Hydrophobic", color: "#cddc39", rs: 0.30 },
-        { res: "DON", label: "Donor",       color: "#00e5ff", rs: 0.33 },
-        { res: "ACC", label: "Acceptor",    color: "#ff4081", rs: 0.36 },
-        { res: "ARO", label: "Aromatic",    color: "#ff9800", rs: 0.39 },
-        { res: "PIC", label: "Pi-cation",   color: "#d500f9", rs: 0.42 },
-        { res: "UNK", label: "Unknown",     color: "#9e9e9e", rs: 0.27 }
+        { res: "HYD", label: "Hydrophobic", color: "#cddc39", rs: 0.30, on: true  },
+        { res: "DON", label: "Donor",       color: "#00e5ff", rs: 0.33, on: true  },
+        { res: "ACC", label: "Acceptor",    color: "#ff4081", rs: 0.36, on: true  },
+        { res: "ARO", label: "Aromatic",    color: "#ff9800", rs: 0.39, on: true  },
+        { res: "PIC", label: "Pi-cation",   color: "#d500f9", rs: 0.42, on: false },
+        { res: "UNK", label: "Unknown",     color: "#9e9e9e", rs: 0.27, on: false }
       ];
 
       // Build Interactions section card dynamically (same pattern as static sections)
       var panel = document.getElementById("panel");
       var sec = document.createElement("div");
-      sec.className = "section-card";
+      sec.className = "section-card collapsed";
       sec.innerHTML =
         '<div class="section-header"><span class="section-arrow">&#9662;</span>Interactions</div>' +
         '<div class="section-body">' +
         INT_TYPES.map(function (t) {
           return '<div class="layer">' +
             '<div class="dot" style="background:' + t.color + ';"></div>' +
-            '<input type="checkbox" id="cb-int-' + t.res + '" checked>' +
+            '<input type="checkbox" id="cb-int-' + t.res + '"' + (t.on ? " checked" : "") + '>' +
             '<label for="cb-int-' + t.res + '">' + t.label + '</label>' +
             '</div>';
         }).join("") +
@@ -465,7 +465,8 @@
           sele:        "[" + t.res + "]",
           color:       t.color,
           opacity:     0.4,
-          radiusScale: t.rs
+          radiusScale: t.rs,
+          visible:     t.on
         });
         document.getElementById("cb-int-" + t.res).addEventListener("change", function (e) {
           rep.setVisibility(e.target.checked);
