@@ -25,7 +25,9 @@
     ".val-badge { margin-left: auto; font-size: 12px; font-weight: 700; color: #7b8fff; flex-shrink: 0; }\n" +
     ".divider { border: none; border-top: 1px solid rgba(255,255,255,0.08); }\n" +
     ".slider-row { padding-left: 20px; }\n" +
-    ".slider-row input[type=range] { width: 100%; display: block; cursor: pointer; accent-color: #7b8fff; height: 3px; }\n" +
+    ".slider-row input[type=range] { width: 100%; display: block; cursor: pointer; accent-color: #7b8fff; height: 3px; margin-bottom: 2px; }\n" +
+    ".sub-row { display: flex; align-items: center; justify-content: space-between; margin-top: 4px; }\n" +
+    ".sub-label { font-size: 10px; color: #666; }\n" +
     ".filter-row { display: flex; align-items: center; justify-content: space-between; }\n" +
     ".filter-label { font-size: 11px; color: #aaa; }\n" +
     ".range-wrap { position: relative; height: 18px; margin-top: 2px; }\n" +
@@ -69,28 +71,34 @@
     '    <div class="dot" style="background:#4caf50;"></div>' +
     '    <input type="checkbox" id="cb-hyd" checked>' +
     '    <label for="cb-hyd">Hydrophobic</label>' +
-    '    <span class="val-badge" id="sv-hyd">0.5</span>' +
     '  </div>' +
     '  <div class="slider-row">' +
+    '    <div class="sub-row"><span class="sub-label">Size</span><span class="val-badge" id="sv-hyd">0.5</span></div>' +
     '    <input type="range" id="sl-hyd" min="0.2" max="2" step="0.05" value="0.5">' +
+    '    <div class="sub-row"><span class="sub-label">Opacity</span><span class="val-badge" id="sv-hyd-op">0.55</span></div>' +
+    '    <input type="range" id="sl-hyd-op" min="0" max="1" step="0.05" value="0.55">' +
     '  </div>' +
     '  <div class="layer">' +
     '    <div class="dot" style="background:#e05c5c;"></div>' +
     '    <input type="checkbox" id="cb-don" checked>' +
     '    <label for="cb-don">Donor</label>' +
-    '    <span class="val-badge" id="sv-don">0.2</span>' +
     '  </div>' +
     '  <div class="slider-row">' +
+    '    <div class="sub-row"><span class="sub-label">Size</span><span class="val-badge" id="sv-don">0.2</span></div>' +
     '    <input type="range" id="sl-don" min="0.2" max="2" step="0.05" value="0.2">' +
+    '    <div class="sub-row"><span class="sub-label">Opacity</span><span class="val-badge" id="sv-don-op">0.45</span></div>' +
+    '    <input type="range" id="sl-don-op" min="0" max="1" step="0.05" value="0.45">' +
     '  </div>' +
     '  <div class="layer">' +
     '    <div class="dot" style="background:#4a90e2;"></div>' +
     '    <input type="checkbox" id="cb-acc" checked>' +
     '    <label for="cb-acc">Acceptor</label>' +
-    '    <span class="val-badge" id="sv-acc">0.2</span>' +
     '  </div>' +
     '  <div class="slider-row">' +
+    '    <div class="sub-row"><span class="sub-label">Size</span><span class="val-badge" id="sv-acc">0.2</span></div>' +
     '    <input type="range" id="sl-acc" min="0.2" max="2" step="0.05" value="0.2">' +
+    '    <div class="sub-row"><span class="sub-label">Opacity</span><span class="val-badge" id="sv-acc-op">0.45</span></div>' +
+    '    <input type="range" id="sl-acc-op" min="0" max="1" step="0.05" value="0.45">' +
     '  </div>' +
     '  <div class="layer">' +
     '    <input type="checkbox" id="cb-labels">' +
@@ -264,9 +272,22 @@
       });
     }
 
+    function bindOpacity(sliderId, valId, rep) {
+      var slider = document.getElementById(sliderId);
+      var valEl  = document.getElementById(valId);
+      slider.addEventListener("input", function () {
+        var v = parseFloat(slider.value);
+        valEl.textContent = v.toFixed(2);
+        rep.setParameters({ opacity: v });
+      });
+    }
+
     bindSlider("sl-hyd", "sv-hyd", repHyd);
     bindSlider("sl-don", "sv-don", repDon);
     bindSlider("sl-acc", "sv-acc", repAcc);
+    bindOpacity("sl-hyd-op", "sv-hyd-op", repHyd);
+    bindOpacity("sl-don-op", "sv-don-op", repDon);
+    bindOpacity("sl-acc-op", "sv-acc-op", repAcc);
 
     // ── Pocket filtering ──────────────────────────────────────────────────
     var ligCoords = [];
