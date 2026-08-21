@@ -187,7 +187,7 @@
     });
 
     var labelText = {};
-    var hydSerials = {};
+    var hydPos = {};
     pockets.structure.eachAtom(function (ap) {
       if (ap.resname === "HYD") {
         var pocketRank = ap.resno;
@@ -195,26 +195,26 @@
         var wfp        = ap.occupancy.toFixed(1);
         var bur        = ap.bfactor.toFixed(2);
         labelText[ap.index] = "#" + pocketRank + " (HR:" + hydRank + ")  WFP:" + wfp + "  bur:" + bur;
-        hydSerials[ap.resno] = ap.serial;
+        hydPos[ap.resno] = [ap.x, ap.y, ap.z];
       }
     });
 
-    var linkPairs = [];
+    // Draw HYD↔polar links via Shape API (coordinate-based — no selection parsing)
+    var linkShape = new NGL.Shape("pocket-links");
     pockets.structure.eachAtom(function (ap) {
-      if ((ap.resname === "DON" || ap.resname === "ACC") && hydSerials[ap.resno]) {
-        linkPairs.push(["@" + hydSerials[ap.resno], "@" + ap.serial]);
+      if ((ap.resname === "DON" || ap.resname === "ACC") && hydPos[ap.resno]) {
+        var h = hydPos[ap.resno];
+        var p = [ap.x, ap.y, ap.z];
+        var color = ap.resname === "DON" ? [0.878, 0.361, 0.361] : [0.290, 0.565, 0.886];
+        var dx = h[0]-p[0], dy = h[1]-p[1], dz = h[2]-p[2];
+        var dist = Math.sqrt(dx*dx + dy*dy + dz*dz).toFixed(1);
+        linkShape.addCylinder(h, p, color, 0.05);
+        var mid = [(h[0]+p[0])/2, (h[1]+p[1])/2, (h[2]+p[2])/2];
+        linkShape.addText(mid, [1, 1, 1], 0.8, dist + "Å");
       }
     });
-
-    var repLinks = pockets.addRepresentation("distance", {
-      atomPair:   linkPairs,
-      color:      "white",
-      labelColor: "white",
-      labelSize:  1.2,
-      linewidth:  1.5,
-      opacity:    0.7,
-      visible:    true
-    });
+    var linkComp = stage.addComponentFromObject(linkShape);
+    var repLinks  = linkComp.addRepresentation("buffer", { visible: true });
 
     var repLabels = pockets.addRepresentation("label", { visible: false,
       sele: "[HYD]",
