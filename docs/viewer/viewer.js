@@ -10,34 +10,45 @@
     "body { background: #1a1a2e; color: #e0e0e0; font-family: sans-serif; display: flex; height: 100vh; overflow: hidden; }\n" +
     "#viewport { flex: 1; }\n" +
     "#panel {\n" +
-    "  width: 220px; background: rgba(0,0,0,0.55); backdrop-filter: blur(6px);\n" +
-    "  padding: 16px 14px; display: flex; flex-direction: column; gap: 12px;\n" +
+    "  width: 232px; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);\n" +
+    "  padding: 12px 10px; display: flex; flex-direction: column; gap: 8px;\n" +
     "  border-left: 1px solid rgba(255,255,255,0.08); z-index: 10; overflow-y: auto;\n" +
     "}\n" +
-    "#back-btn { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; color: #aaa; text-decoration: none; padding: 4px 8px; border: 1px solid rgba(255,255,255,0.15); border-radius: 4px; transition: color 0.15s, border-color 0.15s; }\n" +
+    "#back-btn { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; color: #aaa; text-decoration: none; padding: 4px 8px; border: 1px solid rgba(255,255,255,0.15); border-radius: 4px; transition: color 0.15s, border-color 0.15s; align-self: flex-start; }\n" +
     "#back-btn:hover { color: #fff; border-color: rgba(255,255,255,0.4); }\n" +
-    "#sys-title { font-size: 15px; font-weight: 700; color: #fff; letter-spacing: 0.5px; }\n" +
-    "#panel h3 { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 1.5px; }\n" +
+    "#sys-title { font-size: 15px; font-weight: 700; color: #fff; letter-spacing: 0.5px; padding: 2px 2px 6px; border-bottom: 1px solid rgba(255,255,255,0.08); }\n" +
+    // ── Section cards ──
+    ".section-card { background: rgba(255,255,255,0.04); border-radius: 8px; border: 1px solid rgba(255,255,255,0.08); overflow: hidden; }\n" +
+    ".section-header { display: flex; align-items: center; gap: 7px; padding: 8px 11px; cursor: pointer; font-size: 10px; font-weight: 700; color: #999; text-transform: uppercase; letter-spacing: 1.5px; user-select: none; transition: color 0.15s, background 0.15s; }\n" +
+    ".section-header:hover { background: rgba(255,255,255,0.05); color: #ddd; }\n" +
+    ".section-arrow { font-size: 9px; transition: transform 0.2s; display: inline-block; }\n" +
+    ".section-card.collapsed .section-arrow { transform: rotate(-90deg); }\n" +
+    ".section-card.collapsed .section-body { display: none; }\n" +
+    ".section-body { padding: 10px; display: flex; flex-direction: column; gap: 8px; border-top: 1px solid rgba(255,255,255,0.06); }\n" +
+    // ── Pocket type mini-cards ──
+    ".pocket-card { background: rgba(255,255,255,0.04); border-radius: 6px; border: 1px solid rgba(255,255,255,0.07); padding: 8px 9px; display: flex; flex-direction: column; gap: 5px; }\n" +
+    ".pocket-card input[type=range] { width: 100%; display: block; cursor: pointer; accent-color: #7b8fff; height: 3px; }\n" +
+    // ── Common controls ──
     ".layer { display: flex; align-items: center; gap: 9px; font-size: 13px; }\n" +
-    ".dot { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; opacity: 0.9; }\n" +
+    ".dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; opacity: 0.9; }\n" +
     "input[type=checkbox] { cursor: pointer; accent-color: #7b8fff; }\n" +
-    "label { cursor: pointer; user-select: none; }\n" +
-    ".val-badge { margin-left: auto; font-size: 12px; font-weight: 700; color: #7b8fff; flex-shrink: 0; }\n" +
-    ".divider { border: none; border-top: 1px solid rgba(255,255,255,0.08); }\n" +
-    ".slider-row { padding-left: 20px; margin-bottom: 8px; }\n" +
-    ".slider-row input[type=range] { width: 100%; display: block; cursor: pointer; accent-color: #7b8fff; height: 3px; margin-bottom: 2px; }\n" +
-    ".sub-row { display: flex; align-items: center; justify-content: space-between; margin-top: 4px; }\n" +
-    ".slider-row input[type=range] + .sub-row { margin-top: 10px; }\n" +
+    "label { cursor: pointer; user-select: none; font-size: 13px; }\n" +
+    ".val-badge { margin-left: auto; font-size: 11px; font-weight: 700; color: #7b8fff; flex-shrink: 0; }\n" +
+    ".sub-row { display: flex; align-items: center; justify-content: space-between; }\n" +
     ".sub-label { font-size: 10px; color: #666; }\n" +
+    // ── Filter controls ──
     ".filter-row { display: flex; align-items: center; justify-content: space-between; }\n" +
     ".filter-label { font-size: 11px; color: #aaa; }\n" +
-    ".range-wrap { position: relative; height: 18px; margin-top: 2px; }\n" +
+    ".section-body > input[type=range] { width: 100%; display: block; cursor: pointer; accent-color: #7b8fff; height: 3px; }\n" +
+    // ── Dual rank slider ──
+    ".range-wrap { position: relative; height: 18px; }\n" +
     ".range-track { position: absolute; top: 50%; left: 0; right: 0; height: 3px; transform: translateY(-50%); border-radius: 2px; pointer-events: none; background: rgba(255,255,255,0.12); }\n" +
     ".range-wrap input[type=range] { position: absolute; width: 100%; top: 50%; transform: translateY(-50%); margin: 0; padding: 0; height: 3px; background: transparent; pointer-events: none; -webkit-appearance: none; appearance: none; }\n" +
     ".range-wrap input[type=range]::-webkit-slider-thumb { pointer-events: all; -webkit-appearance: none; width: 13px; height: 13px; border-radius: 50%; background: #7b8fff; cursor: pointer; border: 2px solid #1a1a2e; }\n" +
     ".range-wrap input[type=range]::-moz-range-thumb { pointer-events: all; width: 13px; height: 13px; border-radius: 50%; background: #7b8fff; cursor: pointer; border: 2px solid #1a1a2e; box-sizing: border-box; }\n" +
     "#sl-rank-min { z-index: 2; }\n" +
     "#sl-rank-max { z-index: 3; }\n" +
+    // ── Tooltip ──
     "#tooltip {\n" +
     "  position: fixed; pointer-events: none; z-index: 100;\n" +
     "  background: rgba(0,0,0,0.82); color: #fff;\n" +
@@ -52,92 +63,71 @@
   document.body.innerHTML =
     '<div id="viewport"></div>' +
     '<div id="panel">' +
+
     '  <a id="back-btn" href="../">&#8592; All systems</a>' +
-    '  <div id="sys-title">Loading…</div>' +
-    '  <hr class="divider">' +
-    '  <h3>Layers</h3>' +
-    '  <div class="layer">' +
-    '    <div class="dot" style="background:#5c7fd4;"></div>' +
-    '    <input type="checkbox" id="cb-protein" checked>' +
-    '    <label for="cb-protein">Protein</label>' +
-    '  </div>' +
-    '  <div class="layer">' +
-    '    <div class="dot" style="background:#cccccc;"></div>' +
-    '    <input type="checkbox" id="cb-ligand" checked>' +
-    '    <label for="cb-ligand">Ligand</label>' +
-    '  </div>' +
-    '  <hr class="divider">' +
-    '  <h3>Pockets</h3>' +
-    '  <div class="layer">' +
-    '    <div class="dot" style="background:#4caf50;"></div>' +
-    '    <input type="checkbox" id="cb-hyd" checked>' +
-    '    <label for="cb-hyd">Hydrophobic</label>' +
-    '  </div>' +
-    '  <div class="slider-row">' +
-    '    <div class="sub-row"><span class="sub-label">Size</span><span class="val-badge" id="sv-hyd">0.5</span></div>' +
-    '    <input type="range" id="sl-hyd" min="0.2" max="2" step="0.05" value="0.5">' +
-    '    <div class="sub-row"><span class="sub-label">Opacity</span><span class="val-badge" id="sv-hyd-op">0.55</span></div>' +
-    '    <input type="range" id="sl-hyd-op" min="0" max="1" step="0.05" value="0.55">' +
-    '  </div>' +
-    '  <div class="layer">' +
-    '    <div class="dot" style="background:#e05c5c;"></div>' +
-    '    <input type="checkbox" id="cb-don" checked>' +
-    '    <label for="cb-don">Donor</label>' +
-    '  </div>' +
-    '  <div class="slider-row">' +
-    '    <div class="sub-row"><span class="sub-label">Size</span><span class="val-badge" id="sv-don">0.2</span></div>' +
-    '    <input type="range" id="sl-don" min="0.2" max="2" step="0.05" value="0.2">' +
-    '    <div class="sub-row"><span class="sub-label">Opacity</span><span class="val-badge" id="sv-don-op">0.45</span></div>' +
-    '    <input type="range" id="sl-don-op" min="0" max="1" step="0.05" value="0.45">' +
-    '  </div>' +
-    '  <div class="layer">' +
-    '    <div class="dot" style="background:#4a90e2;"></div>' +
-    '    <input type="checkbox" id="cb-acc" checked>' +
-    '    <label for="cb-acc">Acceptor</label>' +
-    '  </div>' +
-    '  <div class="slider-row">' +
-    '    <div class="sub-row"><span class="sub-label">Size</span><span class="val-badge" id="sv-acc">0.2</span></div>' +
-    '    <input type="range" id="sl-acc" min="0.2" max="2" step="0.05" value="0.2">' +
-    '    <div class="sub-row"><span class="sub-label">Opacity</span><span class="val-badge" id="sv-acc-op">0.45</span></div>' +
-    '    <input type="range" id="sl-acc-op" min="0" max="1" step="0.05" value="0.45">' +
-    '  </div>' +
-    '  <div class="layer">' +
-    '    <input type="checkbox" id="cb-labels">' +
-    '    <label for="cb-labels">Pocket labels</label>' +
-    '  </div>' +
-    '  <div class="layer">' +
-    '    <input type="checkbox" id="cb-links">' +
-    '    <label for="cb-links">Pocket links</label>' +
-    '  </div>' +
-    '  <hr class="divider">' +
-    '  <h3>Filters</h3>' +
-    '  <div class="filter-row">' +
-    '    <span class="filter-label">Rank</span>' +
-    '    <span class="val-badge" id="sv-rank">— —</span>' +
-    '  </div>' +
-    '  <div class="slider-row">' +
-    '    <div class="range-wrap">' +
-    '      <div class="range-track" id="rank-track"></div>' +
-    '      <input type="range" id="sl-rank-min" min="1" max="10" step="1" value="1">' +
-    '      <input type="range" id="sl-rank-max" min="1" max="10" step="1" value="10">' +
+    '  <div id="sys-title">Loading&#8230;</div>' +
+
+    // Layers
+    '  <div class="section-card">' +
+    '    <div class="section-header"><span class="section-arrow">&#9662;</span>Layers</div>' +
+    '    <div class="section-body">' +
+    '      <div class="layer"><div class="dot" style="background:#5c7fd4;"></div><input type="checkbox" id="cb-protein" checked><label for="cb-protein">Protein</label></div>' +
+    '      <div class="layer"><div class="dot" style="background:#cccccc;"></div><input type="checkbox" id="cb-ligand" checked><label for="cb-ligand">Ligand</label></div>' +
     '    </div>' +
     '  </div>' +
-    '  <div class="filter-row">' +
-    '    <span class="filter-label">Max dist. to ligand</span>' +
-    '    <span class="val-badge" id="sv-dist">all</span>' +
+
+    // Pockets
+    '  <div class="section-card">' +
+    '    <div class="section-header"><span class="section-arrow">&#9662;</span>Pockets</div>' +
+    '    <div class="section-body">' +
+    '      <div class="pocket-card">' +
+    '        <div class="layer"><div class="dot" style="background:#4caf50;"></div><input type="checkbox" id="cb-hyd" checked><label for="cb-hyd">Hydrophobic</label></div>' +
+    '        <div class="sub-row"><span class="sub-label">Size</span><span class="val-badge" id="sv-hyd">0.5</span></div>' +
+    '        <input type="range" id="sl-hyd" min="0.2" max="2" step="0.05" value="0.5">' +
+    '        <div class="sub-row"><span class="sub-label">Opacity</span><span class="val-badge" id="sv-hyd-op">0.55</span></div>' +
+    '        <input type="range" id="sl-hyd-op" min="0" max="1" step="0.05" value="0.55">' +
+    '      </div>' +
+    '      <div class="pocket-card">' +
+    '        <div class="layer"><div class="dot" style="background:#e05c5c;"></div><input type="checkbox" id="cb-don" checked><label for="cb-don">Donor</label></div>' +
+    '        <div class="sub-row"><span class="sub-label">Size</span><span class="val-badge" id="sv-don">0.2</span></div>' +
+    '        <input type="range" id="sl-don" min="0.2" max="2" step="0.05" value="0.2">' +
+    '        <div class="sub-row"><span class="sub-label">Opacity</span><span class="val-badge" id="sv-don-op">0.45</span></div>' +
+    '        <input type="range" id="sl-don-op" min="0" max="1" step="0.05" value="0.45">' +
+    '      </div>' +
+    '      <div class="pocket-card">' +
+    '        <div class="layer"><div class="dot" style="background:#4a90e2;"></div><input type="checkbox" id="cb-acc" checked><label for="cb-acc">Acceptor</label></div>' +
+    '        <div class="sub-row"><span class="sub-label">Size</span><span class="val-badge" id="sv-acc">0.2</span></div>' +
+    '        <input type="range" id="sl-acc" min="0.2" max="2" step="0.05" value="0.2">' +
+    '        <div class="sub-row"><span class="sub-label">Opacity</span><span class="val-badge" id="sv-acc-op">0.45</span></div>' +
+    '        <input type="range" id="sl-acc-op" min="0" max="1" step="0.05" value="0.45">' +
+    '      </div>' +
+    '      <div class="layer"><input type="checkbox" id="cb-labels"><label for="cb-labels">Pocket labels</label></div>' +
+    '      <div class="layer"><input type="checkbox" id="cb-links"><label for="cb-links">Pocket links</label></div>' +
+    '    </div>' +
     '  </div>' +
-    '  <div class="slider-row">' +
-    '    <input type="range" id="sl-dist" min="0" max="50" step="0.5" value="50">' +
+
+    // Filters
+    '  <div class="section-card">' +
+    '    <div class="section-header"><span class="section-arrow">&#9662;</span>Filters</div>' +
+    '    <div class="section-body">' +
+    '      <div class="filter-row"><span class="filter-label">Rank</span><span class="val-badge" id="sv-rank">&#8212; &#8212;</span></div>' +
+    '      <div class="range-wrap"><div class="range-track" id="rank-track"></div><input type="range" id="sl-rank-min" min="1" max="10" step="1" value="1"><input type="range" id="sl-rank-max" min="1" max="10" step="1" value="10"></div>' +
+    '      <div class="filter-row"><span class="filter-label">Max dist. to ligand</span><span class="val-badge" id="sv-dist">all</span></div>' +
+    '      <input type="range" id="sl-dist" min="0" max="50" step="0.5" value="50">' +
+    '      <div class="filter-row"><span class="filter-label">Min WFP score</span><span class="val-badge" id="sv-wfp">0</span></div>' +
+    '      <input type="range" id="sl-wfp" min="0" max="100" step="1" value="0">' +
+    '    </div>' +
     '  </div>' +
-    '  <div class="filter-row">' +
-    '    <span class="filter-label">Min WFP score</span>' +
-    '    <span class="val-badge" id="sv-wfp">0</span>' +
-    '  </div>' +
-    '  <div class="slider-row">' +
-    '    <input type="range" id="sl-wfp" min="0" max="100" step="1" value="0">' +
-    '  </div>' +
+
     '</div>' +
     '<div id="tooltip"></div>';
+
+  // ── Section collapse toggles ──────────────────────────────────────────────
+  document.querySelectorAll(".section-header").forEach(function (hdr) {
+    hdr.addEventListener("click", function () {
+      hdr.closest(".section-card").classList.toggle("collapsed");
+    });
+  });
 
   // ── NGL ───────────────────────────────────────────────────────────────────
   var stage = new NGL.Stage("viewport", { backgroundColor: "#1a1a2e" });
@@ -447,21 +437,27 @@
         { res: "UNK", label: "Unknown",     color: "#9e9e9e", rs: 0.27 }
       ];
 
-      // Build Interactions panel section dynamically
+      // Build Interactions section card dynamically (same pattern as static sections)
       var panel = document.getElementById("panel");
       var sec = document.createElement("div");
-      sec.style.cssText = "display:flex;flex-direction:column;gap:12px;";
+      sec.className = "section-card";
       sec.innerHTML =
-        '<hr class="divider">' +
-        '<h3>Interactions</h3>' +
+        '<div class="section-header"><span class="section-arrow">&#9662;</span>Interactions</div>' +
+        '<div class="section-body">' +
         INT_TYPES.map(function (t) {
           return '<div class="layer">' +
             '<div class="dot" style="background:' + t.color + ';"></div>' +
             '<input type="checkbox" id="cb-int-' + t.res + '" checked>' +
             '<label for="cb-int-' + t.res + '">' + t.label + '</label>' +
             '</div>';
-        }).join("");
+        }).join("") +
+        '</div>';
       panel.appendChild(sec);
+
+      // Wire collapse toggle for the new card
+      sec.querySelector(".section-header").addEventListener("click", function () {
+        sec.classList.toggle("collapsed");
+      });
 
       // Add one semi-transparent spacefill halo per interaction type
       INT_TYPES.forEach(function (t) {
