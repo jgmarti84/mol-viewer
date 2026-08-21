@@ -105,6 +105,10 @@
     '    <input type="checkbox" id="cb-labels">' +
     '    <label for="cb-labels">Pocket labels</label>' +
     '  </div>' +
+    '  <div class="layer">' +
+    '    <input type="checkbox" id="cb-links" checked>' +
+    '    <label for="cb-links">Pocket links</label>' +
+    '  </div>' +
     '  <hr class="divider">' +
     '  <h3>Filters</h3>' +
     '  <div class="filter-row">' +
@@ -183,6 +187,7 @@
     });
 
     var labelText = {};
+    var hydSerials = {};
     pockets.structure.eachAtom(function (ap) {
       if (ap.resname === "HYD") {
         var pocketRank = ap.resno;
@@ -190,7 +195,25 @@
         var wfp        = ap.occupancy.toFixed(1);
         var bur        = ap.bfactor.toFixed(2);
         labelText[ap.index] = "#" + pocketRank + " (HR:" + hydRank + ")  WFP:" + wfp + "  bur:" + bur;
+        hydSerials[ap.resno] = ap.serial;
       }
+    });
+
+    var linkPairs = [];
+    pockets.structure.eachAtom(function (ap) {
+      if ((ap.resname === "DON" || ap.resname === "ACC") && hydSerials[ap.resno]) {
+        linkPairs.push(["@" + hydSerials[ap.resno], "@" + ap.serial]);
+      }
+    });
+
+    var repLinks = pockets.addRepresentation("distance", {
+      atomPair:   linkPairs,
+      color:      "white",
+      labelColor: "white",
+      labelSize:  1.2,
+      linewidth:  1.5,
+      opacity:    0.7,
+      visible:    true
     });
 
     var repLabels = pockets.addRepresentation("label", { visible: false,
@@ -262,6 +285,7 @@
     bindRep("cb-don",      repDon);
     bindRep("cb-acc",      repAcc);
     bindRep("cb-labels",   repLabels);
+    bindRep("cb-links",    repLinks);
 
     function bindSlider(sliderId, valId, rep) {
       var slider = document.getElementById(sliderId);
