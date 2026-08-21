@@ -66,7 +66,7 @@
     '  <hr class="divider">' +
     '  <h3>Pockets</h3>' +
     '  <div class="layer">' +
-    '    <div class="dot" style="background:#f5a623;"></div>' +
+    '    <div class="dot" style="background:#4caf50;"></div>' +
     '    <input type="checkbox" id="cb-hyd" checked>' +
     '    <label for="cb-hyd">Hydrophobic</label>' +
     '    <span class="val-badge" id="sv-hyd">0.5</span>' +
@@ -75,7 +75,7 @@
     '    <input type="range" id="sl-hyd" min="0.2" max="2" step="0.05" value="0.5">' +
     '  </div>' +
     '  <div class="layer">' +
-    '    <div class="dot" style="background:#4a90e2;"></div>' +
+    '    <div class="dot" style="background:#e05c5c;"></div>' +
     '    <input type="checkbox" id="cb-don" checked>' +
     '    <label for="cb-don">Donor</label>' +
     '    <span class="val-badge" id="sv-don">0.2</span>' +
@@ -84,7 +84,7 @@
     '    <input type="range" id="sl-don" min="0.2" max="2" step="0.05" value="0.2">' +
     '  </div>' +
     '  <div class="layer">' +
-    '    <div class="dot" style="background:#e05c5c;"></div>' +
+    '    <div class="dot" style="background:#4a90e2;"></div>' +
     '    <input type="checkbox" id="cb-acc" checked>' +
     '    <label for="cb-acc">Acceptor</label>' +
     '    <span class="val-badge" id="sv-acc">0.2</span>' +
@@ -164,13 +164,13 @@
     ligand.addRepresentation("ball+stick", { color: "element" });
 
     var repHyd = pockets.addRepresentation("spacefill", {
-      sele: "[HYD]", color: "#f5a623", opacity: 0.55, radiusScale: 0.5
+      sele: "[HYD]", color: "#4caf50", opacity: 0.55, radiusScale: 0.5
     });
     var repDon = pockets.addRepresentation("spacefill", {
-      sele: "[DON]", color: "#4a90e2", opacity: 0.45, radiusScale: 0.2
+      sele: "[DON]", color: "#e05c5c", opacity: 0.45, radiusScale: 0.2
     });
     var repAcc = pockets.addRepresentation("spacefill", {
-      sele: "[ACC]", color: "#e05c5c", opacity: 0.45, radiusScale: 0.2
+      sele: "[ACC]", color: "#4a90e2", opacity: 0.45, radiusScale: 0.2
     });
 
     var labelText = {};
