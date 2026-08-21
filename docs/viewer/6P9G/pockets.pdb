@@ -1,0 +1,37 @@
+REMARK pockets.pdb — hydrophobic-anchored pockets (polar_neighborhood protocol)
+REMARK ResName  : HYD=hydrophobic  DON=donor  ACC=acceptor
+REMARK ResSeq   : pocket_rank (scored rank; equals hydrophobic_rank when unscored)
+REMARK SegID    : hydrophobic_rank (phase-1 rank)
+REMARK Occupancy: mean_WFP
+REMARK B-factor : buriedness (HYD) | mean_R90_A (DON, ACC)
+HETATM    1  C   HYD A   2      -3.451  -8.482  -6.359 99.99 0.700      2    C
+HETATM    2  C   DON A   2      -3.991  -6.752  -6.998 99.99  1.59      2    C
+HETATM    3  C   DON A   2      -4.628 -11.986  -4.462 48.08  0.84      2    C
+HETATM    4  C   ACC A   2      -3.075  -6.655  -6.776 84.14  1.61      2    C
+HETATM    5  C   ACC A   2      -5.179 -11.377  -4.862 44.83  0.84      2    C
+HETATM    6  C   ACC A   2       0.271  -6.554  -6.612 36.06  0.71      2    C
+HETATM    7  C   HYD A   3       0.615 -12.939   6.232 78.37 0.610      3    C
+HETATM    8  C   DON A   3       0.058 -12.019   6.548 79.59  1.54      3    C
+HETATM    9  C   DON A   3      -2.905  -9.509   9.603 50.68  0.79      3    C
+HETATM   10  C   ACC A   3      -1.113 -11.706   6.468 99.99  1.35      3    C
+HETATM   11  C   HYD A   4       1.832   3.518  -9.022 34.67 0.480      5    C
+HETATM   12  C   DON A   4      -0.273   4.678  -7.805 60.42  0.82      5    C
+HETATM   13  C   ACC A   4       1.273   5.566  -6.859 51.00  0.81      5    C
+HETATM   14  C   ACC A   4      -2.552   3.745  -9.744 45.16  0.84      5    C
+HETATM   15  C   HYD A   5      10.003  -5.208   3.096 65.89 0.740      7    C
+HETATM   16  C   DON A   5      11.981  -2.279   6.410 73.75  0.97      7    C
+HETATM   17  C   DON A   5       9.646  -6.029   2.419 69.52  1.26      7    C
+HETATM   18  C   ACC A   5       9.968  -6.696   1.858 99.99  1.37      7    C
+HETATM   19  C   ACC A   5      12.559  -1.394   6.869 53.28  0.81      7    C
+HETATM   20  C   ACC A   5      11.216  -0.163   2.716 36.06  1.12      7    C
+HETATM   21  C   HYD A   6      10.472  -0.831   0.035 43.35 0.620      9    C
+HETATM   22  C   DON A   6      11.640   0.311   1.210 51.65  1.09      9    C
+HETATM   23  C   ACC A   6      11.327  -0.371   2.834 36.06  0.75      9    C
+HETATM   24  C   HYD A   1       3.794   4.466   7.575 54.30 0.960      11   C
+HETATM   25  C   DON A   1       5.391   4.052   6.374 99.99  1.40      11   C
+HETATM   26  C   DON A   1       2.069   5.320   9.341 93.56  0.95      11   C
+HETATM   27  C   DON A   1       1.362   8.809   9.405 34.76  0.62      11   C
+HETATM   28  C   ACC A   1       6.004   3.357   6.244 99.99  1.01      11   C
+HETATM   29  C   ACC A   1       2.953   5.399  10.125 85.77  0.93      11   C
+HETATM   30  C   ACC A   1       7.353   7.062   9.534 34.11  0.74      11   C
+END
