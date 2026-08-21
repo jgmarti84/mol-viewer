@@ -1,0 +1,18 @@
+REMARK  Ligand interaction atoms
+REMARK  Source: results/3MSS/interactions/Interaction_3mss_complex_protein_3mss_complex_MS7_true.csv
+REMARK  Residue name encodes interaction type:
+REMARK    ACC=acceptor   DON=donor   HYD=hydrophobic
+REMARK    ARO=aromatic   PIC=pi-cation   UNK=unknown
+REMARK  Chain ID mirrors the residue name (A/D/H/R/P/U)
+REMARK  B-factor = interaction distance (Angstrom)
+HETATM    1 C32  HYD H   1     -14.778   7.757  -6.920  1.00  3.97           C
+HETATM    2 C12  HYD H   2     -19.777   6.731  -4.991  1.00  3.88           C
+HETATM    3 C15  HYD H   3     -19.434   8.623  -3.482  1.00  3.96           C
+HETATM    4 C26  HYD H   4     -13.486   7.164  -4.496  1.00  3.87           C
+HETATM    5 C28  HYD H   5     -12.715   7.527  -5.617  1.00  3.78           C
+HETATM    6 C30  HYD H   6     -13.406   7.836  -6.800  1.00  3.50           C
+HETATM    7 C15  HYD H   7     -19.434   8.623  -3.482  1.00  3.76           C
+HETATM    8 C32  HYD H   8     -14.778   7.757  -6.920  1.00  3.87           C
+HETATM    9 C26  HYD H   9     -13.486   7.164  -4.496  1.00  3.84           C
+HETATM   10 C28  HYD H  10     -12.715   7.527  -5.617  1.00  3.94           C
+END

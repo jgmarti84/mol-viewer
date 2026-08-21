@@ -1,0 +1,24 @@
+REMARK  Ligand interaction atoms
+REMARK  Source: results/DHFR/interactions/Interaction_dhfr_complex_protein_dhfr_complex_NAP_true.csv
+REMARK  Residue name encodes interaction type:
+REMARK    ACC=acceptor   DON=donor   HYD=hydrophobic
+REMARK    ARO=aromatic   PIC=pi-cation   UNK=unknown
+REMARK  Chain ID mirrors the residue name (A/D/H/R/P/U)
+REMARK  B-factor = interaction distance (Angstrom)
+HETATM    1 O1A  ACC A   1      -8.531  -5.941  -0.903  1.00  2.83           O
+HETATM    2 O2A  ACC A   2      -9.191  -3.936   0.712  1.00  3.17           O
+HETATM    3 O1N  ACC A   3      -8.068  -8.294   1.411  1.00  2.80           O
+HETATM    4 O3D  ACC A   4      -7.260  -5.466   7.543  1.00  1.44           O
+HETATM    5 O3D  ACC A   5      -7.260  -5.466   7.543  1.00  2.34           O
+HETATM    6 O7N  ACC A   6      -0.071  -2.202   4.324  1.00  3.17           O
+HETATM    7 O1X  ACC A   7     -17.670  -4.357  -2.708  1.00  2.35           O
+HETATM    8 O1X  ACC A   8     -17.670  -4.357  -2.708  1.00  2.72           O
+HETATM    9 O2X  ACC A   9     -17.176  -6.190  -4.468  1.00  2.02           O
+HETATM   10 O2B  ACC A  10     -15.409  -5.216  -3.057  1.00  3.01           O
+HETATM   11 N7A  ACC A  11     -10.899  -6.592  -6.399  1.00  2.01           N
+HETATM   12 O7N  DON D  12      -0.071  -2.202   4.324  1.00  3.17           O
+HETATM   13 O1X  DON D  13     -17.670  -4.357  -2.708  1.00  2.35           O
+HETATM   14 N6A  DON D  14     -11.292  -6.902  -9.507  1.00  2.08           N
+HETATM   15 N7A  DON D  15     -10.899  -6.592  -6.399  1.00  2.01           N
+HETATM   16 C4N  HYD H  16      -2.704  -1.946   3.471  1.00  4.00           C
+END

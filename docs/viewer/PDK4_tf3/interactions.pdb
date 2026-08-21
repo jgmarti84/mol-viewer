@@ -1,0 +1,25 @@
+REMARK  Ligand interaction atoms
+REMARK  Source: results/PDK4/interactions/Interaction_pdk4_complex_protein_pdk4_complex_TF3_true.csv
+REMARK  Residue name encodes interaction type:
+REMARK    ACC=acceptor   DON=donor   HYD=hydrophobic
+REMARK    ARO=aromatic   PIC=pi-cation   UNK=unknown
+REMARK  Chain ID mirrors the residue name (A/D/H/R/P/U)
+REMARK  B-factor = interaction distance (Angstrom)
+HETATM    1 O2   ACC A   1       2.173 -15.845  22.614  1.00  3.20           O
+HETATM    2 CENT ARO R   2       6.019 -10.925  14.790  1.00  5.29           C
+HETATM    3 C11  HYD H   3       4.775 -10.805  15.416  1.00  3.65           C
+HETATM    4 C14  HYD H   4       5.343  -9.717  14.756  1.00  3.91           C
+HETATM    5 C8   HYD H   5       5.459 -12.014  15.445  1.00  3.48           C
+HETATM    6 C10  HYD H   6       6.702 -12.136  14.823  1.00  3.62           C
+HETATM    7 C11  HYD H   7       4.775 -10.805  15.416  1.00  3.92           C
+HETATM    8 C13  HYD H   8       7.261 -11.040  14.162  1.00  3.93           C
+HETATM    9 C14  HYD H   9       5.343  -9.717  14.756  1.00  3.67           C
+HETATM   10 C15  HYD H  10       6.575  -9.838  14.141  1.00  3.69           C
+HETATM   11 C20  HYD H  11       6.509  -8.654  12.038  1.00  3.72           C
+HETATM   12 C10  HYD H  12       6.702 -12.136  14.823  1.00  3.62           C
+HETATM   13 C8   HYD H  13       5.459 -12.014  15.445  1.00  3.62           C
+HETATM   14 C10  HYD H  14       6.702 -12.136  14.823  1.00  3.54           C
+HETATM   15 C14  HYD H  15       5.343  -9.717  14.756  1.00  3.99           C
+HETATM   16 C20  HYD H  16       6.509  -8.654  12.038  1.00  3.69           C
+HETATM   17 CENT PIC P  17       2.722 -14.863  18.662  1.00  3.98           C
+END

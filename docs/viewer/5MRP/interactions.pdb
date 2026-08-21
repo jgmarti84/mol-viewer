@@ -1,0 +1,21 @@
+REMARK  Ligand interaction atoms
+REMARK  Source: results/5MRP/interactions/Interaction_5mrp_complex_protein_5mrp_complex_6BC_true.csv
+REMARK  Residue name encodes interaction type:
+REMARK    ACC=acceptor   DON=donor   HYD=hydrophobic
+REMARK    ARO=aromatic   PIC=pi-cation   UNK=unknown
+REMARK  Chain ID mirrors the residue name (A/D/H/R/P/U)
+REMARK  B-factor = interaction distance (Angstrom)
+HETATM    1 O7   ACC A   1     -10.494  -3.244   0.011  1.00  3.02           O
+HETATM    2 N19  ACC A   2      -9.247  -5.719  -0.456  1.00  3.14           N
+HETATM    3 C11  HYD H   3      -8.531   0.953   0.849  1.00  3.89           C
+HETATM    4 C15  HYD H   4      -9.464  -0.360  -0.828  1.00  3.98           C
+HETATM    5 C14  HYD H   5      -9.356   0.713  -1.674  1.00  3.69           C
+HETATM    6 C1   HYD H   6      -7.290  -6.233   0.131  1.00  3.98           C
+HETATM    7 C9   HYD H   7      -9.120  -1.286   1.359  1.00  3.62           C
+HETATM    8 C10  HYD H   8      -9.027  -0.253   0.453  1.00  3.73           C
+HETATM    9 C15  HYD H   9      -9.464  -0.360  -0.828  1.00  3.56           C
+HETATM   10 C14  HYD H  10      -9.356   0.713  -1.674  1.00  3.79           C
+HETATM   11 C14  HYD H  11      -9.356   0.713  -1.674  1.00  3.81           C
+HETATM   12 C13  HYD H  12      -8.844   1.907  -1.275  1.00  3.87           C
+HETATM   13 CENT PIC P  13      -8.021  -3.791   0.788  1.00  4.71           C
+END

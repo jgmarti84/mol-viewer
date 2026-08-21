@@ -1,0 +1,17 @@
+REMARK  Ligand interaction atoms
+REMARK  Source: results/3N4B/interactions/Interaction_3n4b_complex_protein_3n4b_complex_WWZ_true.csv
+REMARK  Residue name encodes interaction type:
+REMARK    ACC=acceptor   DON=donor   HYD=hydrophobic
+REMARK    ARO=aromatic   PIC=pi-cation   UNK=unknown
+REMARK  Chain ID mirrors the residue name (A/D/H/R/P/U)
+REMARK  B-factor = interaction distance (Angstrom)
+HETATM    1 O2   ACC A   1       4.297   2.860   2.194  1.00  2.95           O
+HETATM    2 N1   DON D   2       4.330   1.402   0.205  1.00  2.82           N
+HETATM    3 C6   HYD H   3       3.776   5.151  -0.586  1.00  3.96           C
+HETATM    4 C15  HYD H   4       7.508   9.742  -1.496  1.00  3.75           C
+HETATM    5 C2   HYD H   5       5.896   4.014  -0.407  1.00  3.92           C
+HETATM    6 C5   HYD H   6       4.386   6.167  -1.303  1.00  3.86           C
+HETATM    7 C6   HYD H   7       3.776   5.151  -0.586  1.00  3.79           C
+HETATM    8 C14  HYD H   8       8.576  10.466  -0.749  1.00  3.94           C
+HETATM    9 C14  HYD H   9       8.576  10.466  -0.749  1.00  3.77           C
+END

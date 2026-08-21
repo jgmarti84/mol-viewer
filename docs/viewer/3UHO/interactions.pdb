@@ -1,0 +1,22 @@
+REMARK  Ligand interaction atoms
+REMARK  Source: results/3UHO/interactions/Interaction_3uho_complex_protein_3uho_complex_DGL_true.csv
+REMARK  Residue name encodes interaction type:
+REMARK    ACC=acceptor   DON=donor   HYD=hydrophobic
+REMARK    ARO=aromatic   PIC=pi-cation   UNK=unknown
+REMARK  Chain ID mirrors the residue name (A/D/H/R/P/U)
+REMARK  B-factor = interaction distance (Angstrom)
+HETATM    1 O    ACC A   1      -4.063  -2.370  -0.358  1.00  3.07           O
+HETATM    2 O    ACC A   2      -4.063  -2.370  -0.358  1.00  2.97           O
+HETATM    3 OE1  ACC A   3      -9.714  -3.953  -0.899  1.00  2.78           O
+HETATM    4 OE2  ACC A   4      -9.327  -2.606  -2.607  1.00  2.44           O
+HETATM    5 OE2  ACC A   5      -9.327  -2.606  -2.607  1.00  2.76           O
+HETATM    6 OXT  ACC A   6      -5.020  -4.260  -0.371  1.00  3.18           O
+HETATM    7 OXT  ACC A   7      -5.020  -4.260  -0.371  1.00  2.96           O
+HETATM    8 O    DON D   8      -4.063  -2.370  -0.358  1.00  3.12           O
+HETATM    9 OE2  DON D   9      -9.327  -2.606  -2.607  1.00  2.44           O
+HETATM   10 OXT  DON D  10      -5.020  -4.260  -0.371  1.00  2.96           O
+HETATM   11 N    DON D  11      -6.076  -1.118  -1.742  1.00  3.04           N
+HETATM   12 N    DON D  12      -6.076  -1.118  -1.742  1.00  3.11           N
+HETATM   13 N    DON D  13      -6.076  -1.118  -1.742  1.00  2.99           N
+HETATM   14 CG   HYD H  14      -8.727  -1.843  -0.440  1.00  3.96           C
+END

@@ -1,0 +1,25 @@
+REMARK  Ligand interaction atoms
+REMARK  Source: results/3BA8/interactions/Interaction_3ba8_complex_aligned_3b8_protein_3ba8_complex_aligned_3b8_3B8_true.csv
+REMARK  Residue name encodes interaction type:
+REMARK    ACC=acceptor   DON=donor   HYD=hydrophobic
+REMARK    ARO=aromatic   PIC=pi-cation   UNK=unknown
+REMARK  Chain ID mirrors the residue name (A/D/H/R/P/U)
+REMARK  B-factor = interaction distance (Angstrom)
+HETATM    1 O11  ACC A   1       1.159  -5.139   7.341  1.00  2.85           O
+HETATM    2 O10  ACC A   2       6.750  -2.432   9.318  1.00  3.08           O
+HETATM    3 N12  DON D   3       3.331  -5.757   7.287  1.00  2.98           N
+HETATM    4 N19  DON D   4       0.316  -3.192   9.187  1.00  3.00           N
+HETATM    5 CENT ARO R   5       4.637  -1.144  10.443  1.00  4.33           C
+HETATM    6 CENT ARO R   6       3.016  -2.645   9.406  1.00  3.22           C
+HETATM    7 C3   HYD H   7       7.275  -0.168  11.043  1.00  3.88           C
+HETATM    8 C2   HYD H   8       5.978  -0.661  10.731  1.00  3.71           C
+HETATM    9 C16  HYD H   9       4.380  -2.285   9.584  1.00  3.82           C
+HETATM   10 C14  HYD H  10       2.656  -3.757   8.582  1.00  3.50           C
+HETATM   11 C15  HYD H  11       4.036  -3.396   8.759  1.00  3.52           C
+HETATM   12 C16  HYD H  12       4.380  -2.285   9.584  1.00  3.60           C
+HETATM   13 C14  HYD H  13       2.656  -3.757   8.582  1.00  3.85           C
+HETATM   14 C5   HYD H  14       6.237   1.567  12.450  1.00  3.59           C
+HETATM   15 C6   HYD H  15       4.948   1.079  12.139  1.00  3.71           C
+HETATM   16 CENT PIC P  16       4.637  -1.144  10.443  1.00  4.98           C
+HETATM   17 CENT PIC P  17       3.016  -2.645   9.406  1.00  4.81           C
+END

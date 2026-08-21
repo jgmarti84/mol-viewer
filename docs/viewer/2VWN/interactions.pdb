@@ -1,0 +1,25 @@
+REMARK  Ligand interaction atoms
+REMARK  Source: results/2VWN/interactions/Interaction_2VWN_complex_protein_2VWN_complex_H25_true.csv
+REMARK  Residue name encodes interaction type:
+REMARK    ACC=acceptor   DON=donor   HYD=hydrophobic
+REMARK    ARO=aromatic   PIC=pi-cation   UNK=unknown
+REMARK  Chain ID mirrors the residue name (A/D/H/R/P/U)
+REMARK  B-factor = interaction distance (Angstrom)
+HETATM    1 N15  DON D   1     -14.483   3.803   1.893  1.00  2.81           N
+HETATM    2 N7   DON D   2     -10.595   6.084   3.225  1.00  3.14           N
+HETATM    3 CENT ARO R   3     -15.303   1.106   1.924  1.00  5.03           C
+HETATM    4 CENT ARO R   4     -15.303   1.106   1.924  1.00  5.46           C
+HETATM    5 CENT ARO R   5     -15.303   1.106   1.924  1.00  4.87           C
+HETATM    6 CENT ARO R   6     -16.674  -2.857   1.767  1.00  4.17           C
+HETATM    7 CENT ARO R   7     -16.674  -2.857   1.767  1.00  4.70           C
+HETATM    8 C11  HYD H   8     -14.867   0.275   0.918  1.00  3.83           C
+HETATM    9 C23  HYD H   9     -17.651  -3.164   0.854  1.00  3.92           C
+HETATM   10 C29  HYD H  10     -16.192  -3.826   2.610  1.00  3.70           C
+HETATM   11 C30  HYD H  11     -17.180  -4.163   1.697  1.00  3.81           C
+HETATM   12 C23  HYD H  12     -17.651  -3.164   0.854  1.00  3.94           C
+HETATM   13 C26  HYD H  13     -16.160   0.611   2.904  1.00  3.78           C
+HETATM   14 C11  HYD H  14     -14.867   0.275   0.918  1.00  3.70           C
+HETATM   15 C29  HYD H  15     -16.192  -3.826   2.610  1.00  3.95           C
+HETATM   16 C26  HYD H  16     -16.160   0.611   2.904  1.00  3.75           C
+HETATM   17 C28  HYD H  17     -15.730   1.947   2.928  1.00  3.96           C
+END

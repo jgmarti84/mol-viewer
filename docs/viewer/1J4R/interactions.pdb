@@ -1,0 +1,24 @@
+REMARK  Ligand interaction atoms
+REMARK  Source: results/1J4R/interactions/Interaction_1J4R_complex_protein_1J4R_complex_001_true.csv
+REMARK  Residue name encodes interaction type:
+REMARK    ACC=acceptor   DON=donor   HYD=hydrophobic
+REMARK    ARO=aromatic   PIC=pi-cation   UNK=unknown
+REMARK  Chain ID mirrors the residue name (A/D/H/R/P/U)
+REMARK  B-factor = interaction distance (Angstrom)
+HETATM    1 O11  ACC A   1       1.765  -3.787   6.705  1.00  2.75           O
+HETATM    2 O17  ACC A   2       5.180  -1.267   4.899  1.00  2.99           O
+HETATM    3 O11  DON D   3       1.765  -3.787   6.705  1.00  2.75           O
+HETATM    4 C13  HYD H   4       1.270   0.721   5.425  1.00  3.67           C
+HETATM    5 C13  HYD H   5       1.270   0.721   5.425  1.00  3.84           C
+HETATM    6 C14  HYD H   6       2.289   0.526   4.282  1.00  3.68           C
+HETATM    7 C28  HYD H   7       4.547   1.081   8.424  1.00  3.86           C
+HETATM    8 C31  HYD H   8       1.987   2.044   9.633  1.00  3.80           C
+HETATM    9 C32  HYD H   9       1.086   3.026  10.048  1.00  3.92           C
+HETATM   10 C26  HYD H  10       9.315  -3.470   5.904  1.00  3.86           C
+HETATM   11 C14  HYD H  11       2.289   0.526   4.282  1.00  3.68           C
+HETATM   12 C15  HYD H  12       2.509  -0.964   3.950  1.00  3.54           C
+HETATM   13 C01  HYD H  13       1.048  -2.032   9.389  1.00  3.58           C
+HETATM   14 C02  HYD H  14       0.437  -1.057  10.200  1.00  3.69           C
+HETATM   15 C06  HYD H  15       2.240  -2.671   9.831  1.00  3.80           C
+HETATM   16 CENT PIC P  16       2.292   2.841  10.740  1.00  5.00           C
+END

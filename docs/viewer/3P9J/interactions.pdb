@@ -1,0 +1,18 @@
+REMARK  Ligand interaction atoms
+REMARK  Source: results/3P9J/interactions/Interaction_3p9j_complex_protein_3p9j_complex_P9J_true.csv
+REMARK  Residue name encodes interaction type:
+REMARK    ACC=acceptor   DON=donor   HYD=hydrophobic
+REMARK    ARO=aromatic   PIC=pi-cation   UNK=unknown
+REMARK  Chain ID mirrors the residue name (A/D/H/R/P/U)
+REMARK  B-factor = interaction distance (Angstrom)
+HETATM    1 N22  ACC A   1      12.805  -0.257  -1.060  1.00  2.76           N
+HETATM    2 O24  DON D   2      12.187  -0.374   6.346  1.00  3.07           O
+HETATM    3 N17  DON D   3      13.110   0.234   1.207  1.00  3.07           N
+HETATM    4 N21  DON D   4      12.239  -1.118  -1.740  1.00  2.99           N
+HETATM    5 C15  HYD H   5       9.988  -4.210   4.025  1.00  3.88           C
+HETATM    6 C23  HYD H   6      10.863  -3.196  -1.388  1.00  3.88           C
+HETATM    7 C23  HYD H   7      10.863  -3.196  -1.388  1.00  3.92           C
+HETATM    8 C23  HYD H   8      10.863  -3.196  -1.388  1.00  3.92           C
+HETATM    9 C19  HYD H   9      11.871  -1.628   0.347  1.00  3.66           C
+HETATM   10 CENT PIC P  10      14.042   1.850   4.336  1.00  4.52           C
+END
