@@ -1,27 +1,15 @@
 REMARK  Ligand interaction atoms
-REMARK  Source: results/1A52/interactions/Interaction_1a52_complex_protein_1a52_complex_EST_true.csv
+REMARK  Source: results/1ALN/interactions/Interaction_1aln_complex_protein_1aln_complex_CTD_true.csv
 REMARK  Residue name encodes interaction type:
 REMARK    ACC=acceptor   DON=donor   HYD=hydrophobic
 REMARK    ARO=aromatic   PIC=pi-cation   UNK=unknown
 REMARK  Chain ID mirrors the residue name (A/D/H/R/P/U)
 REMARK  B-factor = interaction distance (Angstrom)
-HETATM    1 O3   ACC A   1       5.718  -3.583   3.629  1.00  3.19           O
-HETATM    2 O17  ACC A   2       5.115 -12.407  -3.213  1.00  2.70           O
-HETATM    3 O3   DON D   3       5.718  -3.583   3.629  1.00  2.41           O
-HETATM    4 O17  DON D   4       5.115 -12.407  -3.213  1.00  2.70           O
-HETATM    5 CENT ARO R   5       5.824  -5.654   1.783  1.00  5.08           C
-HETATM    6 C1   HYD H   6       5.925  -6.963   2.274  1.00  3.80           C
-HETATM    7 C2   HYD H   7       5.849  -5.892   3.183  1.00  3.99           C
-HETATM    8 C2   HYD H   8       5.849  -5.892   3.183  1.00  3.99           C
-HETATM    9 C4   HYD H   9       5.711  -4.320   1.304  1.00  3.68           C
-HETATM   10 C6   HYD H  10       5.857  -5.110  -1.140  1.00  3.77           C
-HETATM   11 C7   HYD H  11       6.228  -6.321  -2.018  1.00  3.88           C
-HETATM   12 C15  HYD H  12       5.662  -8.808  -3.920  1.00  4.00           C
-HETATM   13 C4   HYD H  13       5.711  -4.320   1.304  1.00  3.92           C
-HETATM   14 C6   HYD H  14       5.857  -5.110  -1.140  1.00  3.60           C
-HETATM   15 C5   HYD H  15       5.794  -5.399   0.361  1.00  3.85           C
-HETATM   16 C10  HYD H  16       5.915  -6.758   0.867  1.00  3.78           C
-HETATM   17 C15  HYD H  17       5.662  -8.808  -3.920  1.00  3.86           C
-HETATM   18 C16  HYD H  18       5.884 -10.281  -4.345  1.00  3.95           C
-HETATM   19 C18  HYD H  19       3.678 -10.132  -2.042  1.00  3.74           C
+HETATM    1 O2   ACC A   1      -8.392   0.027   7.221  1.00  3.00           O
+HETATM    2 O2   ACC A   2      -8.982   3.421   7.021  1.00  2.97           O
+HETATM    3 O3   ACC A   3      -8.158   4.291   9.436  1.00  3.00           O
+HETATM    4 O3   DON D   4      -8.158   4.291   9.436  1.00  2.70           O
+HETATM    5 N4   DON D   5     -11.592  -3.246   7.434  1.00  2.73           N
+HETATM    6 C3   HYD H   6      -9.890  -1.692   7.507  1.00  3.73           C
+HETATM    7 CENT PIC P   7     -10.724  -0.779   8.119  1.00  4.15           C
 END
