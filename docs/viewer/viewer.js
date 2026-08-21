@@ -24,7 +24,7 @@
     "label { cursor: pointer; user-select: none; }\n" +
     ".val-badge { margin-left: auto; font-size: 12px; font-weight: 700; color: #7b8fff; flex-shrink: 0; }\n" +
     ".divider { border: none; border-top: 1px solid rgba(255,255,255,0.08); }\n" +
-    ".slider-row { padding-left: 20px; }\n" +
+    ".slider-row { padding-left: 20px; margin-bottom: 8px; }\n" +
     ".slider-row input[type=range] { width: 100%; display: block; cursor: pointer; accent-color: #7b8fff; height: 3px; margin-bottom: 2px; }\n" +
     ".sub-row { display: flex; align-items: center; justify-content: space-between; margin-top: 4px; }\n" +
     ".sub-label { font-size: 10px; color: #666; }\n" +
