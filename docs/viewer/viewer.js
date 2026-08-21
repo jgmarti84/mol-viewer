@@ -27,6 +27,7 @@
     ".slider-row { padding-left: 20px; margin-bottom: 8px; }\n" +
     ".slider-row input[type=range] { width: 100%; display: block; cursor: pointer; accent-color: #7b8fff; height: 3px; margin-bottom: 2px; }\n" +
     ".sub-row { display: flex; align-items: center; justify-content: space-between; margin-top: 4px; }\n" +
+    ".slider-row input[type=range] + .sub-row { margin-top: 10px; }\n" +
     ".sub-label { font-size: 10px; color: #666; }\n" +
     ".filter-row { display: flex; align-items: center; justify-content: space-between; }\n" +
     ".filter-label { font-size: 11px; color: #aaa; }\n" +
