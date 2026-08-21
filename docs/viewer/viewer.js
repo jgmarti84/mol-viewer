@@ -229,7 +229,7 @@
         var dist = Math.sqrt(dx*dx + dy*dy + dz*dz).toFixed(1);
         addDashedCylinder(linkShape, h, p, color, 0.03);
         var mid = [(h[0]+p[0])/2, (h[1]+p[1])/2, (h[2]+p[2])/2];
-        linkShape.addText(mid, [1, 1, 1], 0.8, dist + "Å");
+        linkShape.addText(mid, [1, 1, 1], 0.8, dist + " A");
       }
     });
     var linkComp = stage.addComponentFromObject(linkShape);
@@ -275,14 +275,14 @@
         if (rn === "HYD") {
           text = "#" + pocketRank + " (HR:" + hydRank + ")  WFP:" + wfp + "  bur:" + ap.bfactor.toFixed(2);
         } else if (rn === "DON" || rn === "ACC") {
-          text = rn + "  →  pocket #" + pocketRank + " (HR:" + hydRank + ")  WFP:" + wfp + "  R90:" + ap.bfactor.toFixed(2) + "Å";
+          text = rn + "  ->  pocket #" + pocketRank + " (HR:" + hydRank + ")  WFP:" + wfp + "  R90:" + ap.bfactor.toFixed(2) + "A";
         } else {
           tooltip.style.display = "none";
           return;
         }
       } else if (intComp && comp === intComp) {
         var intLabels = { ACC: "Acceptor", DON: "Donor", HYD: "Hydrophobic", ARO: "Aromatic", PIC: "Pi-cation", UNK: "Unknown" };
-        text = "Ligand " + (intLabels[ap.resname] || ap.resname) + "  dist: " + ap.bfactor.toFixed(2) + "Å  (" + ap.atomname + ")";
+        text = "Ligand " + (intLabels[ap.resname] || ap.resname) + "  dist: " + ap.bfactor.toFixed(2) + "A  (" + ap.atomname + ")";
       } else {
         tooltip.style.display = "none";
         return;
@@ -407,7 +407,7 @@
       });
 
       document.getElementById("sv-dist").textContent =
-        (maxD >= maxObsDist) ? "all" : maxD.toFixed(1) + "Å";
+        (maxD >= maxObsDist) ? "all" : maxD.toFixed(1) + "A";
       document.getElementById("sv-wfp").textContent  = minWfp.toFixed(0);
       document.getElementById("sv-rank").textContent = minRank + " — " + maxRank;
 
