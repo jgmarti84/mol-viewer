@@ -106,7 +106,7 @@
     '    <label for="cb-labels">Pocket labels</label>' +
     '  </div>' +
     '  <div class="layer">' +
-    '    <input type="checkbox" id="cb-links" checked>' +
+    '    <input type="checkbox" id="cb-links">' +
     '    <label for="cb-links">Pocket links</label>' +
     '  </div>' +
     '  <hr class="divider">' +
@@ -155,12 +155,14 @@
     stage.loadFile("protein.pdb", { defaultRepresentation: false }),
     stage.loadFile("ligand.pdb",  { defaultRepresentation: false }),
     stage.loadFile("pockets.pdb", { defaultRepresentation: false }),
-    fetch("pockets.pdb").then(function (r) { return r.text(); })
+    fetch("pockets.pdb").then(function (r) { return r.text(); }),
+    stage.loadFile("interactions.pdb", { defaultRepresentation: false }).catch(function () { return null; })
   ]).then(function (results) {
-    var protein = results[0];
-    var ligand  = results[1];
-    var pockets = results[2];
-    var pdbText = results[3];
+    var protein  = results[0];
+    var ligand   = results[1];
+    var pockets  = results[2];
+    var pdbText  = results[3];
+    var intComp  = results[4];
 
     // Parse SegID (cols 73-76) from raw PDB — ap.segid is unreliable in NGL 2.3.1
     var hydRankByResno = {};
@@ -200,6 +202,23 @@
     });
 
     // Draw HYD↔polar links via Shape API (coordinate-based — no selection parsing)
+    function addDashedCylinder(shape, from, to, color, r) {
+      var dx = to[0]-from[0], dy = to[1]-from[1], dz = to[2]-from[2];
+      var len = Math.sqrt(dx*dx + dy*dy + dz*dz);
+      if (len === 0) return;
+      var ux = dx/len, uy = dy/len, uz = dz/len;
+      var dashL = 0.4, gapL = 0.3, t = 0;
+      while (t < len) {
+        var t2 = Math.min(t + dashL, len);
+        shape.addCylinder(
+          [from[0]+ux*t,  from[1]+uy*t,  from[2]+uz*t],
+          [from[0]+ux*t2, from[1]+uy*t2, from[2]+uz*t2],
+          color, r
+        );
+        t += dashL + gapL;
+      }
+    }
+
     var linkShape = new NGL.Shape("pocket-links");
     pockets.structure.eachAtom(function (ap) {
       if ((ap.resname === "DON" || ap.resname === "ACC") && hydPos[ap.resno]) {
@@ -208,13 +227,13 @@
         var color = ap.resname === "DON" ? [0.878, 0.361, 0.361] : [0.290, 0.565, 0.886];
         var dx = h[0]-p[0], dy = h[1]-p[1], dz = h[2]-p[2];
         var dist = Math.sqrt(dx*dx + dy*dy + dz*dz).toFixed(1);
-        linkShape.addCylinder(h, p, color, 0.05);
+        addDashedCylinder(linkShape, h, p, color, 0.03);
         var mid = [(h[0]+p[0])/2, (h[1]+p[1])/2, (h[2]+p[2])/2];
         linkShape.addText(mid, [1, 1, 1], 0.8, dist + "Å");
       }
     });
     var linkComp = stage.addComponentFromObject(linkShape);
-    var repLinks  = linkComp.addRepresentation("buffer", { visible: true });
+    var repLinks  = linkComp.addRepresentation("buffer", { visible: false });
 
     var repLabels = pockets.addRepresentation("label", { visible: false,
       sele: "[HYD]",
@@ -244,28 +263,35 @@
         tooltip.style.display = "none";
         return;
       }
-      var ap      = pickingProxy.atom;
-      var rn      = ap.resname;
-      var pocketRank = ap.resno;
-      var hydRank    = hydRankByResno[pocketRank] || String(pocketRank);
-      var wfp        = ap.occupancy.toFixed(1);
+      var ap   = pickingProxy.atom;
+      var comp = pickingProxy.component;
       var text;
 
-      if (rn === "HYD") {
-        var bur = ap.bfactor.toFixed(2);
-        text = "#" + pocketRank + " (HR:" + hydRank + ")  WFP:" + wfp + "  bur:" + bur;
-      } else if (rn === "DON" || rn === "ACC") {
-        var r90 = ap.bfactor.toFixed(2);
-        text = rn + "  →  pocket #" + pocketRank + " (HR:" + hydRank + ")  WFP:" + wfp + "  R90:" + r90 + "Å";
+      if (comp === pockets) {
+        var rn         = ap.resname;
+        var pocketRank = ap.resno;
+        var hydRank    = hydRankByResno[pocketRank] || String(pocketRank);
+        var wfp        = ap.occupancy.toFixed(1);
+        if (rn === "HYD") {
+          text = "#" + pocketRank + " (HR:" + hydRank + ")  WFP:" + wfp + "  bur:" + ap.bfactor.toFixed(2);
+        } else if (rn === "DON" || rn === "ACC") {
+          text = rn + "  →  pocket #" + pocketRank + " (HR:" + hydRank + ")  WFP:" + wfp + "  R90:" + ap.bfactor.toFixed(2) + "Å";
+        } else {
+          tooltip.style.display = "none";
+          return;
+        }
+      } else if (intComp && comp === intComp) {
+        var intLabels = { ACC: "Acceptor", DON: "Donor", HYD: "Hydrophobic", ARO: "Aromatic", PIC: "Pi-cation", UNK: "Unknown" };
+        text = "Ligand " + (intLabels[ap.resname] || ap.resname) + "  dist: " + ap.bfactor.toFixed(2) + "Å  (" + ap.atomname + ")";
       } else {
         tooltip.style.display = "none";
         return;
       }
 
-      tooltip.textContent    = text;
-      tooltip.style.left     = (mouseX + 14) + "px";
-      tooltip.style.top      = (mouseY - 10) + "px";
-      tooltip.style.display  = "block";
+      tooltip.textContent   = text;
+      tooltip.style.left    = (mouseX + 14) + "px";
+      tooltip.style.top     = (mouseY - 10) + "px";
+      tooltip.style.display = "block";
     });
 
     function bindComp(id, comp) {
@@ -409,6 +435,48 @@
     });
     document.getElementById("sl-dist").addEventListener("input", applyFilters);
     document.getElementById("sl-wfp").addEventListener("input", applyFilters);
+
+    // ── Ligand interactions (optional — only if interactions.pdb exists) ──────
+    if (intComp) {
+      var INT_TYPES = [
+        { res: "HYD", label: "Hydrophobic", color: "#cddc39", rs: 1.3 },
+        { res: "DON", label: "Donor",       color: "#00e5ff", rs: 1.5 },
+        { res: "ACC", label: "Acceptor",    color: "#ff4081", rs: 1.7 },
+        { res: "ARO", label: "Aromatic",    color: "#ff9800", rs: 1.9 },
+        { res: "PIC", label: "Pi-cation",   color: "#d500f9", rs: 2.1 },
+        { res: "UNK", label: "Unknown",     color: "#9e9e9e", rs: 1.1 }
+      ];
+
+      // Build Interactions panel section dynamically
+      var panel = document.getElementById("panel");
+      var sec = document.createElement("div");
+      sec.style.cssText = "display:flex;flex-direction:column;gap:12px;";
+      sec.innerHTML =
+        '<hr class="divider">' +
+        '<h3>Interactions</h3>' +
+        INT_TYPES.map(function (t) {
+          return '<div class="layer">' +
+            '<div class="dot" style="background:' + t.color + ';"></div>' +
+            '<input type="checkbox" id="cb-int-' + t.res + '" checked>' +
+            '<label for="cb-int-' + t.res + '">' + t.label + '</label>' +
+            '</div>';
+        }).join("");
+      panel.appendChild(sec);
+
+      // Add one semi-transparent spacefill halo per interaction type
+      INT_TYPES.forEach(function (t) {
+        var rep = intComp.addRepresentation("spacefill", {
+          sele:        "[" + t.res + "]",
+          color:       t.color,
+          opacity:     0.4,
+          radiusScale: t.rs
+        });
+        document.getElementById("cb-int-" + t.res).addEventListener("change", function (e) {
+          rep.setVisibility(e.target.checked);
+        });
+      });
+    }
+
   }).catch(function (err) {
     document.getElementById("sys-title").textContent = "Error: " + err.message;
     console.error(err);
