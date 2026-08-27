@@ -1,0 +1,18 @@
+REMARK  Ligand interaction atoms
+REMARK  Source: results/1WOX/interactions/Interaction_1W0X_complex_protein_1W0X_complex_OLO_true.csv
+REMARK  Residue name encodes interaction type:
+REMARK    ACC=acceptor   DON=donor   HYD=hydrophobic
+REMARK    ARO=aromatic   PIC=pi-cation   UNK=unknown
+REMARK  Chain ID mirrors the residue name (A/D/H/R/P/U)
+REMARK  B-factor = interaction distance (Angstrom)
+HETATM    1 O    ACC A   1      -5.809  10.697  -1.347  1.00  2.86           O
+HETATM    2 N1   ACC A   2       2.186  14.472  -0.872  1.00  2.96           N
+HETATM    3 O    DON D   3      -5.809  10.697  -1.347  1.00  2.86           O
+HETATM    4 N5   DON D   4      -0.242  14.773  -2.871  1.00  2.66           N
+HETATM    5 C7   HYD H   5      -3.647  14.820  -3.521  1.00  3.98           C
+HETATM    6 C8   HYD H   6      -4.812  15.642  -3.565  1.00  3.68           C
+HETATM    7 C9   HYD H   7      -4.645  16.969  -3.929  1.00  3.74           C
+HETATM    8 C10  HYD H   8      -3.320  17.464  -4.233  1.00  3.74           C
+HETATM    9 C11  HYD H   9      -2.205  16.623  -4.176  1.00  3.80           C
+HETATM   10 CENT PIC P  10      -3.502  16.143  -3.877  1.00  4.39           C
+END
