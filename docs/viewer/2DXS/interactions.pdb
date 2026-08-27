@@ -1,0 +1,37 @@
+REMARK  Ligand interaction atoms
+REMARK  Source: results/2DXS/interactions/Interaction_2dxs_complex_protein_2dxs_complex_JTP_true.csv
+REMARK  Residue name encodes interaction type:
+REMARK    ACC=acceptor   DON=donor   HYD=hydrophobic
+REMARK    ARO=aromatic   PIC=pi-cation   UNK=unknown
+REMARK  Chain ID mirrors the residue name (A/D/H/R/P/U)
+REMARK  B-factor = interaction distance (Angstrom)
+HETATM    1 O29  ACC A   1     -17.194  -6.178 -22.745  1.00  2.74           O
+HETATM    2 O29  ACC A   2     -17.194  -6.178 -22.745  1.00  2.77           O
+HETATM    3 C14  HYD H   3     -13.665   2.171 -17.353  1.00  3.85           C
+HETATM    4 C15  HYD H   4     -13.512   2.116 -15.948  1.00  3.67           C
+HETATM    5 C26  HYD H   5     -12.194  -4.940 -15.460  1.00  3.65           C
+HETATM    6 C24  HYD H   6     -10.425  -4.185 -17.113  1.00  3.64           C
+HETATM    7 C25  HYD H   7     -10.934  -5.350 -16.243  1.00  3.83           C
+HETATM    8 C12  HYD H   8     -14.161  -0.252 -17.410  1.00  3.66           C
+HETATM    9 C14  HYD H   9     -13.665   2.171 -17.353  1.00  3.75           C
+HETATM   10 C15  HYD H  10     -13.512   2.116 -15.948  1.00  3.89           C
+HETATM   11 C16  HYD H  11     -13.684   0.880 -15.277  1.00  3.91           C
+HETATM   12 C17  HYD H  12     -14.006  -0.291 -16.001  1.00  3.80           C
+HETATM   13 C23  HYD H  13     -11.516  -3.677 -18.086  1.00  3.98           C
+HETATM   14 C26  HYD H  14     -12.194  -4.940 -15.460  1.00  3.78           C
+HETATM   15 C27  HYD H  15     -13.317  -4.416 -16.386  1.00  3.97           C
+HETATM   16 C25  HYD H  16     -10.934  -5.350 -16.243  1.00  3.79           C
+HETATM   17 C26  HYD H  17     -12.194  -4.940 -15.460  1.00  3.64           C
+HETATM   18 C24  HYD H  18     -10.425  -4.185 -17.113  1.00  3.85           C
+HETATM   19 C25  HYD H  19     -10.934  -5.350 -16.243  1.00  3.70           C
+HETATM   20 C15  HYD H  20     -13.512   2.116 -15.948  1.00  3.88           C
+HETATM   21 C16  HYD H  21     -13.684   0.880 -15.277  1.00  3.91           C
+HETATM   22 C12  HYD H  22     -14.161  -0.252 -17.410  1.00  3.69           C
+HETATM   23 C17  HYD H  23     -14.006  -0.291 -16.001  1.00  3.49           C
+HETATM   24 C1   HYD H  24     -20.283  -5.219 -23.540  1.00  3.54           C
+HETATM   25 C5   HYD H  25     -16.370  -4.444 -21.343  1.00  3.76           C
+HETATM   26 C28  HYD H  26     -16.464  -3.091 -20.875  1.00  3.63           C
+HETATM   27 C6   HYD H  27     -15.401  -5.305 -20.741  1.00  3.70           C
+HETATM   28 C7   HYD H  28     -14.560  -4.830 -19.709  1.00  3.80           C
+HETATM   29 CENT PIC P  29     -15.513  -3.967 -20.295  1.00  4.97           C
+END
