@@ -51,6 +51,7 @@
     "input[type=range] { width: 100%; display: block; cursor: pointer; accent-color: #7b8fff; height: 3px; }\n" +
     "#frame-counter { font-size: 11px; color: #555; text-align: center; font-variant-numeric: tabular-nums; }\n" +
     "#status { font-size: 11px; color: #f5a623; min-height: 14px; text-align: center; }\n" +
+    ".no-layers-msg { font-size: 11px; color: #555; }\n" +
     ".hidden { display: none !important; }\n";
   document.head.appendChild(style);
 
@@ -119,6 +120,28 @@
     '    </div>' +
     '  </div>' +
 
+    '  <div class="section-card hidden" id="card-layers">' +
+    '    <div class="section-header"><span class="section-arrow">&#9662;</span>Layers</div>' +
+    '    <div class="section-body">' +
+    '      <div class="layer" id="row-water" style="display:none">' +
+    '        <input type="checkbox" id="cb-water">' +
+    '        <label for="cb-water">Water</label>' +
+    '        <span class="val-badge" id="badge-water"></span>' +
+    '      </div>' +
+    '      <div class="layer" id="row-ion" style="display:none">' +
+    '        <input type="checkbox" id="cb-ion">' +
+    '        <label for="cb-ion">Ions</label>' +
+    '        <span class="val-badge" id="badge-ion"></span>' +
+    '      </div>' +
+    '      <div class="layer" id="row-ligand" style="display:none">' +
+    '        <input type="checkbox" id="cb-ligand">' +
+    '        <label for="cb-ligand">Ligand / Probe</label>' +
+    '        <span class="val-badge" id="badge-ligand"></span>' +
+    '      </div>' +
+    '      <div class="no-layers-msg" id="no-layers">No extra components detected</div>' +
+    '    </div>' +
+    '  </div>' +
+
     '</div>';
 
   // ── Section collapse ──────────────────────────────────────────────────────
@@ -146,14 +169,17 @@
   var pdbFile    = null;
   var dcdFile    = null;
   var activeComp = null;
-  var activeTraj = null;   // NGL Trajectory object
-  var player     = null;   // NGL TrajectoryPlayer
+  var activeTraj = null;
+  var player     = null;
   var nframes    = 0;
   var playing    = false;
 
   var reprCartoon  = null;
   var reprBackbone = null;
   var reprSurface  = null;
+  var reprWater    = null;
+  var reprIon      = null;
+  var reprLigand   = null;
 
   // ── File pickers ──────────────────────────────────────────────────────────
   document.getElementById("pdb-btn").addEventListener("click", function () {
@@ -200,11 +226,45 @@
         comp       = c;
         activeComp = c;
 
-        reprCartoon  = c.addRepresentation("cartoon",  { color: "chainindex", smoothSheet: true });
-        reprBackbone = c.addRepresentation("backbone", { color: "#7b8fff", visible: false });
-        reprSurface  = c.addRepresentation("surface",  { color: "chainindex", opacity: 0.35, visible: false });
+        // Protein representations — read current checkbox state so user prefs
+        // survive reloads triggered by toggling superpose.
+        reprCartoon  = c.addRepresentation("cartoon",  {
+          color: "chainindex", smoothSheet: true,
+          visible: document.getElementById("cb-cartoon").checked
+        });
+        reprBackbone = c.addRepresentation("backbone", {
+          color: "#7b8fff",
+          visible: document.getElementById("cb-backbone").checked
+        });
+        reprSurface  = c.addRepresentation("surface",  {
+          sele: "protein", color: "chainindex", opacity: 0.35,
+          visible: document.getElementById("cb-surface").checked
+        });
 
-        syncReprCheckboxes();
+        // Extra component layers — detect which are present and build toggles.
+        reprWater  = c.addRepresentation("point",      {
+          sele: "water",  color: "#4fc3f7", pointSize: 2,
+          visible: document.getElementById("cb-water").checked
+        });
+        reprIon    = c.addRepresentation("spacefill",  {
+          sele: "ion",    color: "element",  scale: 0.8,
+          visible: document.getElementById("cb-ion").checked
+        });
+        reprLigand = c.addRepresentation("ball+stick", {
+          sele: "ligand", color: "element",
+          visible: document.getElementById("cb-ligand").checked
+        });
+
+        // Count atoms per layer and show/hide rows accordingly.
+        var nWater  = countSele(c.structure, "water");
+        var nIon    = countSele(c.structure, "ion");
+        var nLigand = countSele(c.structure, "ligand");
+        updateLayerRow("water",  nWater);
+        updateLayerRow("ion",    nIon);
+        updateLayerRow("ligand", nLigand);
+        document.getElementById("no-layers").style.display =
+          (nWater + nIon + nLigand === 0) ? "" : "none";
+
         c.autoView();
         setStatus("Reading DCD...");
 
@@ -212,14 +272,12 @@
       })
       .then(function (buffer) {
         setStatus("Sending to trajectory worker...");
-        return sendDCDtoSW(buffer); // transfers buffer ownership to SW
+        return sendDCDtoSW(buffer);
       })
       .then(function (meta) {
         nframes = meta.nset;
         setStatus("Loading trajectory...");
 
-        // Point NGL at our Service Worker instead of a real MDSrv server.
-        // Empty base URL means all generated URLs are same-origin and the SW intercepts them.
         NGL.setTrajectoryDatasource(makeDatasource());
 
         var superpose = document.getElementById("cb-superpose").checked;
@@ -230,22 +288,19 @@
       })
       .then(function (tc) {
         activeTraj = tc.trajectory;
-
-        // Wait for NGL to receive the frame count from the SW before creating the player
         return waitForFrameCount(activeTraj);
       })
       .then(function (count) {
         nframes = count;
 
-        var fps  = parseInt(document.getElementById("sl-speed").value, 10);
-        player   = new NGL.TrajectoryPlayer(activeTraj, {
+        var fps = parseInt(document.getElementById("sl-speed").value, 10);
+        player  = new NGL.TrajectoryPlayer(activeTraj, {
           step: 1,
           timeout: Math.round(1000 / fps),
           mode: "loop",
           interpolateType: ""
         });
 
-        // Sync frame slider and counter with NGL's player
         activeTraj.signals.frameChanged.add(function (i) {
           document.getElementById("sl-frame").value = i;
           updateCounter(i);
@@ -318,15 +373,23 @@
     if (reprSurface)  reprSurface.setVisibility(this.checked);
   });
 
+  // ── Layer toggles ─────────────────────────────────────────────────────────
+  document.getElementById("cb-water").addEventListener("change", function () {
+    if (reprWater)  reprWater.setVisibility(this.checked);
+  });
+  document.getElementById("cb-ion").addEventListener("change", function () {
+    if (reprIon)    reprIon.setVisibility(this.checked);
+  });
+  document.getElementById("cb-ligand").addEventListener("change", function () {
+    if (reprLigand) reprLigand.setVisibility(this.checked);
+  });
+
   // ── Helpers ───────────────────────────────────────────────────────────────
 
-  // Build an MDSrv-compatible datasource. Uses NGL.MdsrvDatasource if available,
-  // otherwise constructs a plain object with the same interface.
   function makeDatasource() {
     if (typeof NGL.MdsrvDatasource === "function") {
       return new NGL.MdsrvDatasource("");
     }
-    // Inline fallback matching the MdsrvDatasource URL template exactly
     return {
       getUrl:         function (p) { return "file/" + p; },
       getCountUrl:    function (p) { return "traj/numframes/" + p; },
@@ -337,7 +400,6 @@
     };
   }
 
-  // Transfers the DCD ArrayBuffer to the Service Worker and waits for acknowledgement.
   function sendDCDtoSW(buffer) {
     return new Promise(function (resolve, reject) {
       function onMsg(e) {
@@ -351,13 +413,11 @@
       }
       navigator.serviceWorker.addEventListener("message", onMsg);
       navigator.serviceWorker.ready.then(function (reg) {
-        // Transfer buffer ownership to SW — main page can no longer access it
         reg.active.postMessage({ type: "DCD_LOAD", buffer: buffer }, [buffer]);
       });
     });
   }
 
-  // Waits for NGL to set the frame count (requires a round-trip XHR to the SW).
   function waitForFrameCount(traj) {
     return new Promise(function (resolve) {
       if (traj.numframes > 0) { resolve(traj.numframes); return; }
@@ -374,40 +434,61 @@
     });
   }
 
+  // Count atoms matching a selection string in an NGL Structure.
+  function countSele(structure, sele) {
+    var n   = 0;
+    var sel = new NGL.Selection(sele);
+    structure.eachAtom(function () { n++; }, sel);
+    return n;
+  }
+
+  // Show a layer row with its atom count badge, or keep it hidden if count is 0.
+  function updateLayerRow(id, count) {
+    document.getElementById("row-" + id).style.display =
+      count > 0 ? "" : "none";
+    document.getElementById("badge-" + id).textContent =
+      count > 0 ? String(count) : "";
+  }
+
   function teardown() {
     if (player) { player.stop(); player = null; }
     activeTraj = null;
     stage.removeAllComponents();
-    activeComp = null; reprCartoon = null; reprBackbone = null; reprSurface = null;
+    activeComp   = null;
+    reprCartoon  = null; reprBackbone = null; reprSurface = null;
+    reprWater    = null; reprIon      = null; reprLigand  = null;
     nframes = 0; playing = false;
     document.getElementById("play-btn").innerHTML = "&#9654;&#xFE0E; Play";
     document.getElementById("empty-state").style.display = "";
     if (navigator.serviceWorker.controller) {
       navigator.serviceWorker.controller.postMessage({ type: "DCD_CLEAR" });
     }
+    // Reset layer rows so they re-detect on next load.
+    ["water", "ion", "ligand"].forEach(function (id) {
+      document.getElementById("row-" + id).style.display = "none";
+      document.getElementById("badge-" + id).textContent = "";
+    });
+    document.getElementById("no-layers").style.display = "";
     hidePostLoad();
   }
 
   function showPostLoad() {
     document.getElementById("card-playback").classList.remove("hidden");
     document.getElementById("card-repr").classList.remove("hidden");
+    document.getElementById("card-layers").classList.remove("hidden");
   }
 
   function hidePostLoad() {
     document.getElementById("card-playback").classList.add("hidden");
     document.getElementById("card-repr").classList.add("hidden");
+    document.getElementById("card-layers").classList.add("hidden");
   }
 
   function setStatus(msg) { document.getElementById("status").textContent = msg; }
 
   function updateCounter(i) {
-    document.getElementById("frame-counter").textContent = "Frame " + (i + 1) + " / " + nframes;
-  }
-
-  function syncReprCheckboxes() {
-    document.getElementById("cb-cartoon").checked  = true;
-    document.getElementById("cb-backbone").checked = false;
-    document.getElementById("cb-surface").checked  = false;
+    document.getElementById("frame-counter").textContent =
+      "Frame " + (i + 1) + " / " + nframes;
   }
 
   });
