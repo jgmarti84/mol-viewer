@@ -146,9 +146,10 @@ function parseDCD(buffer) {
   }
 
   var nset     = dv.getInt32(h + 4,  true); // number of frames
-  var charmm   = dv.getInt32(h + 80, true); // CHARMM version (0 = not CHARMM)
-  // CHARMM extended format: has a unit-cell block before each frame's coordinates
-  var hasExtra = (charmm !== 0) && ((dv.getInt32(h + 48, true) & 0x1) !== 0);
+  var charmm   = dv.getInt32(h + 80, true); // CHARMM version (0 = not CHARMM/NAMD)
+  // ICNTRL[14] at h+60 is the has_extra_block (unit cell) flag.
+  // h+48 is DELTA (float64 timestep) — a common off-by-one mistake.
+  var hasExtra = (charmm !== 0) && (dv.getInt32(h + 60, true) !== 0);
 
   rec(); // Block 2: title (skip)
 
