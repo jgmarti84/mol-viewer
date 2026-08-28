@@ -57,9 +57,12 @@
     .tag.lig  { background: rgba(200,200,200,0.1); color: #ccc; }
     .tag.hyd  { background: rgba(245,166,35,0.15);  color: #f5a623; }
     .tag.soon { background: rgba(255,255,255,0.05); color: #555; }
+    .tag.tool { background: rgba(123,143,255,0.12); color: #7b8fff; }
 
     .card-arrow { font-size: 18px; color: #444; margin-top: auto; align-self: flex-end; }
     .card:hover .card-arrow { color: #7b8fff; }
+
+    .divider { font-size: 10px; font-weight: 700; color: #444; text-transform: uppercase; letter-spacing: 1.5px; padding: 16px 0 4px; }
   </style>
 </head>
 <body>
@@ -68,6 +71,19 @@
     <p>Select a system to open the interactive 3D viewer.</p>
   </header>
 
+  <!-- MD Trajectory tool card — hidden during development; restore when ready
+  <div class="divider">Tools</div>
+  <div class="grid" style="margin-bottom: 32px;">
+    <a class="card" href="trajectory/">
+      <div class="card-id" style="font-size:15px; letter-spacing:0;">MD Trajectory</div>
+      <div class="card-name">Visualize molecular dynamics from PDB + DCD files</div>
+      <div class="card-meta"><span class="tag tool">file picker</span><span class="tag tool">DCD</span></div>
+      <div class="card-arrow">&#8594;</div>
+    </a>
+  </div>
+  -->
+
+  <div class="divider">Systems</div>
   <div class="grid" id="grid"></div>
 
   <script>
