@@ -100,12 +100,12 @@
     '        <input type="range" id="sl-frame" min="0" max="0" step="1" value="0">' +
     '      </div>' +
     '      <div>' +
-    '        <div class="sub-row"><span class="sub-label">Speed</span><span class="val-badge" id="sv-speed">50 ms</span></div>' +
-    '        <input type="range" id="sl-speed" min="20" max="500" step="10" value="50">' +
+    '        <div class="sub-row"><span class="sub-label">Speed</span><span class="val-badge" id="sv-speed">10 fps</span></div>' +
+    '        <input type="range" id="sl-speed" min="1" max="25" step="1" value="10">' +
     '      </div>' +
     '      <div class="layer">' +
     '        <input type="checkbox" id="cb-superpose" checked>' +
-    '        <label for="cb-superpose">Center frames (Ca)</label>' +
+    '        <label for="cb-superpose">Superpose frames</label>' +
     '      </div>' +
     '    </div>' +
     '  </div>' +
@@ -128,21 +128,28 @@
     });
   });
 
+  // ── Service Worker registration ───────────────────────────────────────────
+  if (!('serviceWorker' in navigator)) {
+    document.getElementById("status").textContent =
+      "Service Workers not supported in this browser.";
+  } else {
+    navigator.serviceWorker.register('./sw.js').catch(function (err) {
+      console.warn("SW registration failed:", err);
+    });
+  }
+
   // ── NGL Stage ─────────────────────────────────────────────────────────────
   var stage = new NGL.Stage("viewport", { backgroundColor: "#1a1a2e" });
   window.addEventListener("resize", function () { stage.handleResize(); });
 
   // ── State ─────────────────────────────────────────────────────────────────
-  var pdbFile     = null;
-  var dcdFile     = null;
-  var activeComp  = null;
-  var frames      = [];   // [{x: Float32Array, y: Float32Array, z: Float32Array}]
-  var caIndices   = [];   // indices of Cα atoms in structure
-  var refCentroid = null; // {x, y, z} centroid of Cα in frame 0
-  var nframes     = 0;
-  var curFrame    = 0;
-  var animTimer   = null;
-  var playing     = false;
+  var pdbFile    = null;
+  var dcdFile    = null;
+  var activeComp = null;
+  var activeTraj = null;   // NGL Trajectory object
+  var player     = null;   // NGL TrajectoryPlayer
+  var nframes    = 0;
+  var playing    = false;
 
   var reprCartoon  = null;
   var reprBackbone = null;
@@ -158,17 +165,17 @@
 
   document.getElementById("pdb-input").addEventListener("change", function (e) {
     pdbFile = e.target.files[0] || null;
-    var el = document.getElementById("pdb-name");
+    var el  = document.getElementById("pdb-name");
     el.textContent = pdbFile ? pdbFile.name : "none";
-    el.className = "file-name" + (pdbFile ? " ready" : "");
+    el.className   = "file-name" + (pdbFile ? " ready" : "");
     syncLoadBtn();
   });
 
   document.getElementById("dcd-input").addEventListener("change", function (e) {
     dcdFile = e.target.files[0] || null;
-    var el = document.getElementById("dcd-name");
+    var el  = document.getElementById("dcd-name");
     el.textContent = dcdFile ? dcdFile.name : "none";
-    el.className = "file-name" + (dcdFile ? " ready" : "");
+    el.className   = "file-name" + (dcdFile ? " ready" : "");
     syncLoadBtn();
   });
 
@@ -186,45 +193,67 @@
     setStatus("Loading structure...");
     teardown();
 
-    var loadedComp;
+    var comp;
 
     stage.loadFile(pdbFile, { ext: "pdb", defaultRepresentation: false })
-      .then(function (comp) {
-        loadedComp = comp;
-        activeComp = comp;
+      .then(function (c) {
+        comp       = c;
+        activeComp = c;
 
-        reprCartoon  = comp.addRepresentation("cartoon",  { color: "chainindex", smoothSheet: true });
-        reprBackbone = comp.addRepresentation("backbone", { color: "#7b8fff", visible: false });
-        reprSurface  = comp.addRepresentation("surface",  { color: "chainindex", opacity: 0.35, visible: false });
+        reprCartoon  = c.addRepresentation("cartoon",  { color: "chainindex", smoothSheet: true });
+        reprBackbone = c.addRepresentation("backbone", { color: "#7b8fff", visible: false });
+        reprSurface  = c.addRepresentation("surface",  { color: "chainindex", opacity: 0.35, visible: false });
 
         syncReprCheckboxes();
-        comp.autoView();
-        setStatus("Parsing DCD...");
+        c.autoView();
+        setStatus("Reading DCD...");
 
-        return readFileAsArrayBuffer(dcdFile);
+        return readFileAsBuffer(dcdFile);
       })
       .then(function (buffer) {
-        var traj = parseDCD(buffer);
-        var natom = loadedComp.structure.atomCount;
+        setStatus("Sending to trajectory worker...");
+        return sendDCDtoSW(buffer); // transfers buffer ownership to SW
+      })
+      .then(function (meta) {
+        nframes = meta.nset;
+        setStatus("Loading trajectory...");
 
-        if (traj.natom !== natom) {
-          throw new Error(
-            "Atom count mismatch: PDB has " + natom + " atoms, DCD has " + traj.natom
-          );
-        }
+        // Point NGL at our Service Worker instead of a real MDSrv server.
+        // Empty base URL means all generated URLs are same-origin and the SW intercepts them.
+        NGL.setTrajectoryDatasource(makeDatasource());
 
-        frames  = traj.frames;
-        nframes = traj.nset;
+        var superpose = document.getElementById("cb-superpose").checked;
+        return comp.addTrajectory("trajectory.dcd", {
+          superpose: superpose,
+          sele: ".CA"
+        });
+      })
+      .then(function (tc) {
+        activeTraj = tc.trajectory;
 
-        // Cache Cα indices and reference centroid from frame 0
-        caIndices   = getCaIndices(loadedComp.structure);
-        refCentroid = computeCentroid(frames[0], caIndices);
+        // Wait for NGL to receive the frame count from the SW before creating the player
+        return waitForFrameCount(activeTraj);
+      })
+      .then(function (count) {
+        nframes = count;
+
+        var fps  = parseInt(document.getElementById("sl-speed").value, 10);
+        player   = new NGL.TrajectoryPlayer(activeTraj, {
+          step: 1,
+          timeout: Math.round(1000 / fps),
+          mode: "loop",
+          interpolateType: ""
+        });
+
+        // Sync frame slider and counter with NGL's player
+        activeTraj.signals.frameChanged.add(function (i) {
+          document.getElementById("sl-frame").value = i;
+          updateCounter(i);
+        });
 
         var slFrame = document.getElementById("sl-frame");
         slFrame.max   = nframes - 1;
         slFrame.value = 0;
-
-        renderFrame(0);
         updateCounter(0);
 
         document.getElementById("empty-state").style.display = "none";
@@ -237,84 +266,46 @@
       });
   }
 
-  // ── Frame rendering ───────────────────────────────────────────────────────
-  function renderFrame(idx) {
-    if (!activeComp || !frames[idx]) return;
-    curFrame = idx;
-
-    var frame   = frames[idx];
-    var store   = activeComp.structure.atomStore;
-    var superpose = document.getElementById("cb-superpose").checked;
-
-    if (superpose && caIndices.length > 0 && refCentroid) {
-      var cur = computeCentroid(frame, caIndices);
-      var dx = refCentroid.x - cur.x;
-      var dy = refCentroid.y - cur.y;
-      var dz = refCentroid.z - cur.z;
-      var n = frame.x.length;
-      var tx = new Float32Array(n);
-      var ty = new Float32Array(n);
-      var tz = new Float32Array(n);
-      for (var i = 0; i < n; i++) {
-        tx[i] = frame.x[i] + dx;
-        ty[i] = frame.y[i] + dy;
-        tz[i] = frame.z[i] + dz;
-      }
-      store.x.set(tx);
-      store.y.set(ty);
-      store.z.set(tz);
-    } else {
-      store.x.set(frame.x);
-      store.y.set(frame.y);
-      store.z.set(frame.z);
-    }
-
-    activeComp.updateRepresentations({ position: true });
-    stage.viewer.requestRender();
-
-    document.getElementById("sl-frame").value = idx;
-    updateCounter(idx);
-  }
-
   // ── Playback controls ─────────────────────────────────────────────────────
   document.getElementById("play-btn").addEventListener("click", function () {
-    if (!nframes) return;
+    if (!player) return;
     if (playing) {
-      stopAnim();
+      player.pause();
+      playing = false;
+      this.innerHTML = "&#9654;&#xFE0E; Play";
     } else {
-      startAnim();
+      player.play();
+      playing = true;
+      this.innerHTML = "&#9646;&#9646; Pause";
     }
   });
 
   document.getElementById("sl-frame").addEventListener("input", function () {
-    stopAnim();
-    renderFrame(parseInt(this.value, 10));
+    if (!activeTraj) return;
+    if (playing && player) { player.pause(); playing = false; }
+    document.getElementById("play-btn").innerHTML = "&#9654;&#xFE0E; Play";
+    activeTraj.setFrame(parseInt(this.value, 10));
   });
 
   document.getElementById("sl-speed").addEventListener("input", function () {
-    var v = parseInt(this.value, 10);
-    document.getElementById("sv-speed").textContent = v + " ms";
-    if (playing) { stopAnim(); startAnim(); }
+    var fps = parseInt(this.value, 10);
+    document.getElementById("sv-speed").textContent = fps + " fps";
+    if (!activeTraj) return;
+    var wasPlaying = playing;
+    if (player) player.pause();
+    player = new NGL.TrajectoryPlayer(activeTraj, {
+      step: 1,
+      timeout: Math.round(1000 / fps),
+      mode: "loop",
+      interpolateType: ""
+    });
+    if (wasPlaying) { player.play(); }
+    playing = wasPlaying;
   });
 
   document.getElementById("cb-superpose").addEventListener("change", function () {
-    if (nframes) renderFrame(curFrame);
+    if (activeComp && dcdFile) doLoad();
   });
-
-  function startAnim() {
-    var speed = parseInt(document.getElementById("sl-speed").value, 10);
-    animTimer = setInterval(function () {
-      renderFrame((curFrame + 1) % nframes);
-    }, speed);
-    playing = true;
-    document.getElementById("play-btn").innerHTML = "&#9646;&#9646; Pause";
-  }
-
-  function stopAnim() {
-    if (animTimer) { clearInterval(animTimer); animTimer = null; }
-    playing = false;
-    document.getElementById("play-btn").innerHTML = "&#9654;&#xFE0E; Play";
-  }
 
   // ── Representation toggles ────────────────────────────────────────────────
   document.getElementById("cb-cartoon").addEventListener("change", function () {
@@ -327,97 +318,54 @@
     if (reprSurface)  reprSurface.setVisibility(this.checked);
   });
 
-  // ── DCD parser ────────────────────────────────────────────────────────────
-  function parseDCD(buffer) {
-    var dv  = new DataView(buffer);
-    var pos = 0;
-
-    // Detect endianness: first Fortran record marker must be 84
-    var le = true;
-    if (dv.getInt32(0, true) !== 84) {
-      if (dv.getInt32(0, false) !== 84) {
-        throw new Error("DCD: bad file — first block marker is not 84");
-      }
-      le = false;
-    }
-
-    function i32()  { var v = dv.getInt32(pos, le);   pos += 4; return v; }
-    function skip(n){ pos += n; }
-
-    function record() {
-      var len   = i32();
-      var start = pos;
-      skip(len);
-      var end = i32();
-      if (len !== end) throw new Error("DCD: Fortran record mismatch (" + len + " vs " + end + ")");
-      return { start: start, len: len };
-    }
-
-    // Block 1: header (84 bytes)
-    var hdr  = record();
-    var h    = hdr.start;
-    var cord = String.fromCharCode(dv.getUint8(h), dv.getUint8(h+1), dv.getUint8(h+2), dv.getUint8(h+3));
-    if (cord !== "CORD") throw new Error('DCD: expected "CORD", got "' + cord + '"');
-
-    var nset     = dv.getInt32(h + 4,  le);
-    var charmm   = dv.getInt32(h + 80, le);
-    var hasExtra = charmm !== 0 && (dv.getInt32(h + 48, le) & 0x1) !== 0; // unit cell per frame
-
-    // Block 2: title (skip)
-    record();
-
-    // Block 3: atom count
-    var atomRec = record();
-    var natom   = dv.getInt32(atomRec.start, le);
-
-    // Read coordinate frames
-    var frameList = [];
-    for (var f = 0; f < nset; f++) {
-      if (hasExtra) record(); // unit cell block
-
-      var xr = record();
-      var yr = record();
-      var zr = record();
-
-      var x = readFloats(dv, xr.start, natom, le);
-      var y = readFloats(dv, yr.start, natom, le);
-      var z = readFloats(dv, zr.start, natom, le);
-
-      frameList.push({ x: x, y: y, z: z });
-    }
-
-    return { nset: nset, natom: natom, frames: frameList };
-  }
-
-  function readFloats(dv, offset, count, le) {
-    // Fast path: if little-endian (common), reuse buffer memory directly
-    if (le) {
-      return new Float32Array(dv.buffer.slice(offset, offset + count * 4));
-    }
-    var out = new Float32Array(count);
-    for (var i = 0; i < count; i++) out[i] = dv.getFloat32(offset + i * 4, false);
-    return out;
-  }
-
   // ── Helpers ───────────────────────────────────────────────────────────────
-  function getCaIndices(structure) {
-    var idx = [];
-    structure.eachAtom(function (ap) {
-      if (ap.atomname === "CA") idx.push(ap.index);
-    });
-    return idx;
-  }
 
-  function computeCentroid(frame, indices) {
-    var sx = 0, sy = 0, sz = 0, n = indices.length;
-    for (var i = 0; i < n; i++) {
-      var k = indices[i];
-      sx += frame.x[k]; sy += frame.y[k]; sz += frame.z[k];
+  // Build an MDSrv-compatible datasource. Uses NGL.MdsrvDatasource if available,
+  // otherwise constructs a plain object with the same interface.
+  function makeDatasource() {
+    if (typeof NGL.MdsrvDatasource === "function") {
+      return new NGL.MdsrvDatasource("");
     }
-    return { x: sx / n, y: sy / n, z: sz / n };
+    // Inline fallback matching the MdsrvDatasource URL template exactly
+    return {
+      getUrl:         function (p) { return "file/" + p; },
+      getCountUrl:    function (p) { return "traj/numframes/" + p; },
+      getFrameUrl:    function (p, i) { return "traj/frame/" + i + "/" + p; },
+      getFrameParams: function (p, idx) { return "atomIndices=" + idx.join(";"); },
+      getPathUrl:     function (p, t) { return "traj/path/" + t + "/" + p; },
+      getExt:         function (p) { return p.split(".").pop(); }
+    };
   }
 
-  function readFileAsArrayBuffer(file) {
+  // Transfers the DCD ArrayBuffer to the Service Worker and waits for acknowledgement.
+  function sendDCDtoSW(buffer) {
+    return new Promise(function (resolve, reject) {
+      function onMsg(e) {
+        if (e.data && e.data.type === "DCD_READY") {
+          navigator.serviceWorker.removeEventListener("message", onMsg);
+          resolve({ nset: e.data.nset, natom: e.data.natom });
+        } else if (e.data && e.data.type === "DCD_ERROR") {
+          navigator.serviceWorker.removeEventListener("message", onMsg);
+          reject(new Error(e.data.message));
+        }
+      }
+      navigator.serviceWorker.addEventListener("message", onMsg);
+      navigator.serviceWorker.ready.then(function (reg) {
+        // Transfer buffer ownership to SW — main page can no longer access it
+        reg.active.postMessage({ type: "DCD_LOAD", buffer: buffer }, [buffer]);
+      });
+    });
+  }
+
+  // Waits for NGL to set the frame count (requires a round-trip XHR to the SW).
+  function waitForFrameCount(traj) {
+    return new Promise(function (resolve) {
+      if (traj.numframes > 0) { resolve(traj.numframes); return; }
+      traj.signals.countChanged.addOnce(function () { resolve(traj.numframes); });
+    });
+  }
+
+  function readFileAsBuffer(file) {
     return new Promise(function (resolve, reject) {
       var reader = new FileReader();
       reader.onload  = function (e) { resolve(e.target.result); };
@@ -427,11 +375,16 @@
   }
 
   function teardown() {
-    stopAnim();
+    if (player) { player.stop(); player = null; }
+    activeTraj = null;
     stage.removeAllComponents();
-    activeComp = null; frames = []; caIndices = []; refCentroid = null; nframes = 0; curFrame = 0;
-    reprCartoon = null; reprBackbone = null; reprSurface = null;
+    activeComp = null; reprCartoon = null; reprBackbone = null; reprSurface = null;
+    nframes = 0; playing = false;
+    document.getElementById("play-btn").innerHTML = "&#9654;&#xFE0E; Play";
     document.getElementById("empty-state").style.display = "";
+    if (navigator.serviceWorker.controller) {
+      navigator.serviceWorker.controller.postMessage({ type: "DCD_CLEAR" });
+    }
     hidePostLoad();
   }
 
