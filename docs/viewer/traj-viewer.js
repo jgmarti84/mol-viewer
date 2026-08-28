@@ -145,6 +145,7 @@
   // ── State ─────────────────────────────────────────────────────────────────
   var pdbFile = null;
   var dcdFile = null;
+  var dcdBlobUrl = null;
   var activeComp = null;
   var player = null;
   var playing = false;
@@ -205,7 +206,8 @@
         setStatus("Loading trajectory...");
 
         var superpose = document.getElementById("cb-superpose").checked;
-        return comp.addTrajectory(dcdFile, { superpose: superpose, sele: ".CA" });
+        dcdBlobUrl = URL.createObjectURL(dcdFile);
+        return comp.addTrajectory(dcdBlobUrl, { superpose: superpose, sele: ".CA" });
       })
       .then(function (tc) {
         nframes = tc.trajectory.numframes;
@@ -291,6 +293,7 @@
   // ── Helpers ───────────────────────────────────────────────────────────────
   function teardown() {
     if (player) { player.stop(); player = null; }
+    if (dcdBlobUrl) { URL.revokeObjectURL(dcdBlobUrl); dcdBlobUrl = null; }
     stage.removeAllComponents();
     activeComp = null; reprCartoon = null; reprBackbone = null; reprSurface = null;
     playing = false;
