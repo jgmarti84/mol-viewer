@@ -255,15 +255,13 @@
           visible: document.getElementById("cb-ligand").checked
         });
 
-        // Count atoms per layer and show/hide rows accordingly.
-        var nWater  = countSele(c.structure, "water");
-        var nIon    = countSele(c.structure, "ion");
-        var nLigand = countSele(c.structure, "ligand");
-        updateLayerRow("water",  nWater);
-        updateLayerRow("ion",    nIon);
-        updateLayerRow("ligand", nLigand);
+        // Detect which component types exist and show/hide layer rows.
+        var comps = detectComponents(c.structure);
+        updateLayerRow("water",  comps.water);
+        updateLayerRow("ion",    comps.ion);
+        updateLayerRow("ligand", comps.ligand);
         document.getElementById("no-layers").style.display =
-          (nWater + nIon + nLigand === 0) ? "" : "none";
+          (comps.water + comps.ion + comps.ligand === 0) ? "" : "none";
 
         c.autoView();
         setStatus("Reading DCD...");
@@ -307,9 +305,12 @@
         });
 
         var slFrame = document.getElementById("sl-frame");
-        slFrame.max   = nframes - 1;
+        slFrame.max   = Math.max(0, nframes - 1);
         slFrame.value = 0;
-        updateCounter(0);
+
+        // Load frame 0 immediately so the view is populated and the player has
+        // a starting point. updateCounter is called from the frameChanged handler.
+        activeTraj.setFrame(0);
 
         document.getElementById("empty-state").style.display = "none";
         setStatus("Ready — " + nframes + " frames");
@@ -421,7 +422,11 @@
   function waitForFrameCount(traj) {
     return new Promise(function (resolve) {
       if (traj.numframes > 0) { resolve(traj.numframes); return; }
-      traj.signals.countChanged.addOnce(function () { resolve(traj.numframes); });
+      // NGL dispatches the count as the signal argument; traj.numframes is also
+      // set before the signal fires, so prefer the argument then fall back.
+      traj.signals.countChanged.addOnce(function (count) {
+        resolve(count || traj.numframes);
+      });
     });
   }
 
@@ -434,12 +439,16 @@
     });
   }
 
-  // Count atoms matching a selection string in an NGL Structure.
-  function countSele(structure, sele) {
-    var n   = 0;
-    var sel = new NGL.Selection(sele);
-    structure.eachAtom(function () { n++; }, sel);
-    return n;
+  // Detect which extra molecular components exist and how many atoms each has.
+  // Uses eachResidue + ResidueProxy methods — no NGL.Selection needed.
+  function detectComponents(structure) {
+    var water = 0, ion = 0, ligand = 0;
+    structure.eachResidue(function (rp) {
+      if      (rp.isWater())  { water  += rp.atomCount; }
+      else if (rp.isIon())    { ion    += rp.atomCount; }
+      else if (rp.isHetero()) { ligand += rp.atomCount; }
+    });
+    return { water: water, ion: ion, ligand: ligand };
   }
 
   // Show a layer row with its atom count badge, or keep it hidden if count is 0.
@@ -487,6 +496,7 @@
   function setStatus(msg) { document.getElementById("status").textContent = msg; }
 
   function updateCounter(i) {
+    if (i < 0 || !nframes) return; // ignore NGL's -1 init signal and unset state
     document.getElementById("frame-counter").textContent =
       "Frame " + (i + 1) + " / " + nframes;
   }
