@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Phenol Viewer — System Index</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #1a1a2e; color: #e0e0e0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      min-height: 100vh; padding: 48px 32px;
+    }
+
+    header { margin-bottom: 40px; }
+    header h1 { font-size: 22px; font-weight: 600; color: #fff; letter-spacing: 0.3px; }
+    header p  { font-size: 13px; color: #666; margin-top: 6px; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      padding: 20px;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+      display: flex; flex-direction: column; gap: 10px;
+      transition: background 0.15s, border-color 0.15s, transform 0.15s;
+    }
+    .card:hover {
+      background: rgba(255,255,255,0.08);
+      border-color: rgba(255,255,255,0.18);
+      transform: translateY(-2px);
+    }
+
+    .card-id {
+      font-size: 20px; font-weight: 700; color: #7b8fff; letter-spacing: 1px;
+    }
+    .card-name {
+      font-size: 13px; color: #ccc; line-height: 1.4;
+    }
+    .card-meta {
+      display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px;
+    }
+    .tag {
+      font-size: 11px; padding: 2px 8px; border-radius: 99px;
+      background: rgba(255,255,255,0.07); color: #aaa;
+    }
+    .tag.lig  { background: rgba(200,200,200,0.1); color: #ccc; }
+    .tag.hyd  { background: rgba(245,166,35,0.15);  color: #f5a623; }
+    .card-arrow { font-size: 18px; color: #444; margin-top: auto; align-self: flex-end; }
+    .card:hover .card-arrow { color: #7b8fff; }
+    .hint { margin-top: 16px; font-size: 12px; color: #666; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Phenol Viewer</h1>
+    <p>Independent viewer space for phenol dynamics.</p>
+  </header>
+
+  <div class="grid">
+    <a class="card" href="2OO8/">
+      <div class="card-id">2OO8</div>
+      <div class="card-name">Phenol case placeholder. Upload the phenol viewer files here later.</div>
+      <div class="card-meta">
+        <span class="tag lig">phenol</span>
+        <span class="tag hyd">viewer folder ready</span>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+  </div>
+
+  <div class="hint">This section is separate from the main ethanol systems.</div>
+</body>
+</html>
