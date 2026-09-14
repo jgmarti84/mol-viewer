@@ -1,0 +1,18 @@
+REMARK  Ligand interaction atoms
+REMARK  Source: results/2PIQ/interactions/Interaction_2PIQ_aligned_to_minimized_system_protein_2PIQ_aligned_to_minimized_system_DHT_true.csv
+REMARK  Residue name encodes interaction type:
+REMARK    ACC=acceptor   DON=donor   HYD=hydrophobic
+REMARK    ARO=aromatic   PIC=pi-cation   UNK=unknown
+REMARK  Chain ID mirrors the residue name (A/D/H/R/P/U)
+REMARK  B-factor = interaction distance (Angstrom)
+HETATM    1 O17  ACC A   1      -9.692   7.235  -7.021  1.00  2.87           O
+HETATM    2 O17  DON D   2      -9.692   7.235  -7.021  1.00  2.81           O
+HETATM    3 O17  DON D   3      -9.692   7.235  -7.021  1.00  2.87           O
+HETATM    4 C18  HYD H   4      -8.005   5.822  -5.150  1.00  3.59           C
+HETATM    5 C2   HYD H   5      -5.557  -1.112  -6.060  1.00  3.80           C
+HETATM    6 C19  HYD H   6      -5.472   1.745  -4.743  1.00  3.73           C
+HETATM    7 C4   HYD H   7      -3.376   0.284  -6.495  1.00  3.90           C
+HETATM    8 C5   HYD H   8      -4.212   1.516  -7.018  1.00  3.74           C
+HETATM    9 C6   HYD H   9      -3.484   2.884  -6.837  1.00  3.80           C
+HETATM   10 C16  HYD H  10      -7.348   7.525  -7.618  1.00  3.90           C
+END
