@@ -1,0 +1,22 @@
+REMARK  Ligand interaction atoms
+REMARK  Source: results/3F82/interactions/Interaction_3F82_complex_protein_3F82_complex_353_true.csv
+REMARK  Residue name encodes interaction type:
+REMARK    ACC=acceptor   DON=donor   HYD=hydrophobic
+REMARK    ARO=aromatic   PIC=pi-cation   UNK=unknown
+REMARK  Chain ID mirrors the residue name (A/D/H/R/P/U)
+REMARK  B-factor = interaction distance (Angstrom)
+HETATM    1 O30  ACC A   1      -4.019   3.060  -7.092  1.00  2.88           O
+HETATM    2 O31  ACC A   2      -3.385   6.025  -9.988  1.00  2.87           O
+HETATM    3 N26  ACC A   3      -5.898  11.680  -2.747  1.00  2.86           N
+HETATM    4 N28  DON D   4      -4.397  13.039  -1.513  1.00  3.00           N
+HETATM    5 C7   HYD H   5      -5.114  10.297  -4.572  1.00  3.42           C
+HETATM    6 C24  HYD H   6      -3.422   4.515 -14.036  1.00  3.62           C
+HETATM    7 C2   HYD H   7      -5.726   0.617  -6.837  1.00  3.80           C
+HETATM    8 C6   HYD H   8      -5.959  -0.301  -5.827  1.00  3.78           C
+HETATM    9 C6   HYD H   9      -5.959  -0.301  -5.827  1.00  3.79           C
+HETATM   10 C3   HYD H  10      -2.936   6.744  -5.768  1.00  3.85           C
+HETATM   11 C24  HYD H  11      -3.422   4.515 -14.036  1.00  3.72           C
+HETATM   12 C8   HYD H  12      -3.355   7.946  -7.828  1.00  3.32           C
+HETATM   13 C4   HYD H  13      -2.766   7.942  -5.085  1.00  3.70           C
+HETATM   14 CENT PIC P  14      -4.833  -0.439  -6.652  1.00  4.79           C
+END
